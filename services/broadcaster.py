@@ -2,16 +2,15 @@
 import random
 
 from nonebot import logger
-from nonebot.adapters.onebot.v11 import Bot, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot
 
 from ..config import CORE_MEMBERS
 from ..models.group import GroupConfig
 from ..models.tweet import TweetConversation
-from ..storage import get_all_group_configs
 from ..renderer import render_conversation_card
+from ..storage import get_all_group_configs
 from .image_sender import image_cq_from_path, image_segment_from_path
 from .switches import is_master_on
-
 
 GROUP_PUSH_DELAY_MIN_SECONDS = 3.0
 GROUP_PUSH_DELAY_MAX_SECONDS = 5.0
@@ -68,8 +67,7 @@ async def broadcast_to_groups(bot: Bot, conversations: list[TweetConversation]):
         logger.error(f"Get group list failed: {e}")
         return
 
-    # Render serially. Chromium screenshots are memory-heavy and this plugin
-    # shares a small host with the WebUI.
+    # Render serially so isolated Pillow workers cannot overlap on a small host.
     all_card_paths = []
     for conv in conversations:
         try:

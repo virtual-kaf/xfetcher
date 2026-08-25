@@ -16,8 +16,8 @@ dependencies = [
     "httpx>=0.24.0",
     "aiohttp>=3.9.0",
     "python-dateutil>=2.8.0",
-    "jinja2>=3.0.0",
-    "playwright>=1.40.0",
+    "Pillow>=10.0.0",
+    "emoji>=2.10.0",
 ]
 
 [project.optional-dependencies]
@@ -37,7 +37,8 @@ package-dir = {nonebot_plugin_xfetch = "."}
 
 [tool.setuptools.package-data]
 nonebot_plugin_xfetch = [
-    "renderer/templates/*.html",
+    "renderer/assets/*",
+    "renderer/pillow_worker.py",
     "data/misc/*",
 ]
 

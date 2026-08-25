@@ -168,6 +168,9 @@ XFETCH_RENDER_IMAGE_CONCURRENCY: int = _get_config_int(
 XFETCH_RENDER_MAX_HEIGHT: int = _get_config_int(
     "KABUBU_XFETCH_RENDER_MAX_HEIGHT", 4096, minimum=800, maximum=8192
 )
+XFETCH_RENDER_MEMORY_MB: int = _get_config_int(
+    "KABUBU_XFETCH_RENDER_MEMORY_MB", 384, minimum=256, maximum=1024
+)
 XFETCH_RENDER_MAX_THREAD_ITEMS: int = _get_config_int(
     "KABUBU_XFETCH_RENDER_MAX_THREAD_ITEMS", 3, minimum=1, maximum=12
 )

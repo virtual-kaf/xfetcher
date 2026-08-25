@@ -1,391 +1,520 @@
-"""Jinja2 + Playwright HTML 截图渲染引擎。"""
+"""Bounded remote-asset prefetch plus isolated Pillow card rendering."""
+
+from __future__ import annotations
 
 import asyncio
+import copy
+import hashlib
+import json
+import os
+import sys
+import time
+import uuid
+from collections.abc import Iterable
 from pathlib import Path
-from typing import List, Optional
+from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-
+import httpx
 from nonebot import logger
+from PIL import Image, UnidentifiedImageError
 
 from ..config import (
     CARD_DIR,
-    XFETCH_RENDER_BROWSER_MAX_USES,
     XFETCH_RENDER_IMAGE_CONCURRENCY,
     XFETCH_RENDER_IMAGE_MAX_BYTES,
     XFETCH_RENDER_IMAGE_TIMEOUT,
+    XFETCH_RENDER_MAX_HEIGHT,
+    XFETCH_RENDER_MEMORY_MB,
     XFETCH_RENDER_TIMEOUT,
 )
-from ..models.tweet import TweetConversation
+from ..models.tweet import TweetConversation, TweetItem
 
+WORKER_PATH = Path(__file__).with_name("pillow_worker.py")
+ASSET_DIR = Path(__file__).with_name("assets")
+FONT_PATH = ASSET_DIR / "HYSongYunLangHeiW.ttf"
+RENDER_CACHE_DIR = CARD_DIR.parent / "renderer_cache"
+MEDIA_CACHE_DIR = RENDER_CACHE_DIR / "media"
+EMOJI_CACHE_DIR = RENDER_CACHE_DIR / "emoji"
+TEMP_DIR = RENDER_CACHE_DIR / "tmp"
 
-TEMPLATE_DIR = Path(__file__).parent / "templates"
-
-_env = Environment(
-    loader=FileSystemLoader(str(TEMPLATE_DIR)),
-    autoescape=select_autoescape(["html"]),
-)
-
-# Keep a single Chromium page active so full-page cards cannot starve SnowLuma.
-_browser = None
-_playwright = None
-_browser_lock = asyncio.Lock()
+_MAX_IMAGE_PIXELS = 12_000_000
+_MEDIA_CACHE_TTL = 24 * 3600
+_EMOJI_CACHE_TTL = 30 * 24 * 3600
 _render_gate = asyncio.Semaphore(1)
-_image_request_gate = asyncio.Semaphore(XFETCH_RENDER_IMAGE_CONCURRENCY)
-_browser_uses = 0
-_BROWSER_CLOSE_TIMEOUT_SECONDS = 5
-_PAGE_CLOSE_TIMEOUT_SECONDS = 3
+_image_gate = asyncio.Semaphore(XFETCH_RENDER_IMAGE_CONCURRENCY)
+_active_processes: set[asyncio.subprocess.Process] = set()
+_last_prune = 0.0
 
-# A transparent image keeps the card layout stable when one remote CDN request
-# times out or exceeds the safe compressed-size limit.
-_TRANSPARENT_PNG = bytes.fromhex(
-    "89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c02"
-    "0000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082"
-)
-
-
-# Full-page cards keep remote-media slots and their natural document height.
 
 def _bounded_image_url(url: str) -> str:
-    """Ask Twitter's CDN for a card-sized image instead of the original."""
+    """Ask Twitter for card-sized media while leaving other hosts unchanged."""
     parts = urlsplit(url)
-    if parts.hostname != "pbs.twimg.com" or not parts.path.startswith("/media/"):
+    if (
+        parts.hostname or ""
+    ).casefold() != "pbs.twimg.com" or not parts.path.startswith("/media/"):
         return url
     query = dict(parse_qsl(parts.query, keep_blank_values=True))
     query["name"] = "medium"
-    return urlunsplit(
-        (parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment)
-    )
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), ""))
 
 
-async def _fulfill_image_fallback(route) -> None:
-    """Resolve a failed image request without keeping networkidle pending."""
+def _validate_image(path: Path) -> None:
+    Image.MAX_IMAGE_PIXELS = _MAX_IMAGE_PIXELS
+    with Image.open(path) as image:
+        width, height = image.size
+        if width <= 0 or height <= 0 or width * height > _MAX_IMAGE_PIXELS:
+            raise ValueError(f"unsafe decoded image dimensions: {width}x{height}")
+        image.verify()
+
+
+def _cache_path(cache_dir: Path, url: str) -> Path:
+    return cache_dir / f"{hashlib.sha256(url.encode('utf-8')).hexdigest()}.img"
+
+
+async def _download_image(client: httpx.AsyncClient, url: str, cache_dir: Path) -> Path:
+    bounded_url = _bounded_image_url(url)
+    destination = _cache_path(cache_dir, bounded_url)
+    if destination.exists():
+        try:
+            await asyncio.to_thread(_validate_image, destination)
+            os.utime(destination, None)
+            return destination
+        except (OSError, ValueError, UnidentifiedImageError):
+            destination.unlink(missing_ok=True)
+
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_suffix(f".download-{uuid.uuid4().hex}")
     try:
-        await route.fulfill(
-            status=200,
-            content_type="image/png",
-            body=_TRANSPARENT_PNG,
-        )
-    except Exception:
-        # The page may already be closing because the render itself timed out.
-        pass
-
-
-async def _allow_card_image_only(route) -> None:
-    """Fetch images with a short deadline; block all other remote resources."""
-    if route.request.resource_type != "image":
-        await route.abort()
-        return
-
-    response = None
-    source_url = route.request.url
-    try:
-        async with _image_request_gate:
-            response = await route.fetch(
-                url=_bounded_image_url(source_url),
-                timeout=XFETCH_RENDER_IMAGE_TIMEOUT * 1000,
-                max_redirects=3,
-            )
-            content_type = response.headers.get("content-type", "")
+        async with _image_gate, client.stream("GET", bounded_url) as response:
+            if not response.is_success:
+                raise RuntimeError(f"HTTP {response.status_code}")
+            content_type = response.headers.get("content-type", "").split(";", 1)[0]
+            if not content_type.casefold().startswith("image/"):
+                raise RuntimeError(f"unexpected content type {content_type!r}")
             raw_length = response.headers.get("content-length", "")
             try:
                 content_length = int(raw_length)
             except (TypeError, ValueError):
                 content_length = 0
-            if (
-                not response.ok
-                or not content_type.casefold().startswith("image/")
-                or content_length > XFETCH_RENDER_IMAGE_MAX_BYTES
-            ):
+            if content_length > XFETCH_RENDER_IMAGE_MAX_BYTES:
                 raise RuntimeError(
-                    f"unsafe image response status={response.status} "
-                    f"content_type={content_type!r} bytes={content_length}"
+                    f"compressed image too large: {content_length} bytes"
                 )
-            await route.fulfill(response=response)
-    except Exception as exc:
-        parts = urlsplit(source_url)
-        label = f"{parts.netloc}{parts.path}"[:160]
-        reason = (
-            str(exc)
-            if isinstance(exc, RuntimeError)
-            else type(exc).__name__
-        )
-        logger.warning(f"[Render] Remote image degraded: {label} ({reason})")
-        await _fulfill_image_fallback(route)
+            total = 0
+            with temporary.open("wb") as stream:
+                async for chunk in response.aiter_bytes():
+                    total += len(chunk)
+                    if total > XFETCH_RENDER_IMAGE_MAX_BYTES:
+                        raise RuntimeError(
+                            f"compressed image exceeded {XFETCH_RENDER_IMAGE_MAX_BYTES} bytes"
+                        )
+                    stream.write(chunk)
+        await asyncio.to_thread(_validate_image, temporary)
+        os.replace(temporary, destination)
+        return destination
     finally:
-        if response is not None:
-            try:
-                await response.dispose()
-            except Exception:
-                pass
+        temporary.unlink(missing_ok=True)
 
 
-async def _close_browser(reason: str) -> None:
-    """Drop both Chromium and its Playwright driver before a retry/recycle."""
-    global _browser, _playwright, _browser_uses
-    async with _browser_lock:
-        browser = _browser
-        playwright = _playwright
-        _browser = None
-        _playwright = None
-        _browser_uses = 0
-
-    if browser is not None or playwright is not None:
-        logger.info(f"[Render] Releasing browser: {reason}")
-    if browser is not None:
-        try:
-            await asyncio.wait_for(
-                browser.close(),
-                timeout=_BROWSER_CLOSE_TIMEOUT_SECONDS,
-            )
-        except asyncio.TimeoutError:
-            logger.warning("[Render] Browser close timed out; dropping process handle")
-        except Exception as exc:  # Browser may already be disconnected.
-            logger.warning(f"[Render] Browser close failed: {exc}")
-    if playwright is not None:
-        try:
-            await asyncio.wait_for(
-                playwright.stop(),
-                timeout=_BROWSER_CLOSE_TIMEOUT_SECONDS,
-            )
-        except asyncio.TimeoutError:
-            logger.warning("[Render] Playwright stop timed out")
-        except Exception as exc:
-            logger.warning(f"[Render] Playwright stop failed: {exc}")
-
-
-async def _get_browser():
-    global _browser, _playwright, _browser_uses
-    async with _browser_lock:
-        try:
-            is_healthy = _browser is not None and _browser.is_connected()
-        except Exception:
-            is_healthy = False
-        if is_healthy:
-            return _browser
-
-        stale_browser = _browser
-        stale_playwright = _playwright
-        _browser = None
-        _playwright = None
-        _browser_uses = 0
-        if stale_browser is not None:
-            try:
-                await stale_browser.close()
-            except Exception:
-                pass
-        if stale_playwright is not None:
-            try:
-                await stale_playwright.stop()
-            except Exception:
-                pass
-
-        from playwright.async_api import async_playwright
-
-        playwright = await async_playwright().start()
-        try:
-            browser = await playwright.chromium.launch(
-                headless=True,
-                args=[
-                    "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                    "--disable-gpu",
-                    "--disable-dev-shm-usage",
-                    "--disable-extensions",
-                    "--disable-background-networking",
-                    "--disable-breakpad",
-                    "--disable-component-update",
-                    "--disable-sync",
-                    "--renderer-process-limit=1",
-                    "--disk-cache-size=1",
-                    "--media-cache-size=1",
-                    "--no-first-run",
-                    "--no-default-browser-check",
-                    "--mute-audio",
-                    # Use Chromium defaults for full-page cards.
-                ],
-            )
-        except Exception:
-            await playwright.stop()
-            raise
-        _browser = browser
-        _playwright = playwright
-        logger.info("[Render] Chromium started for full-page cards")
-        return browser
-
-
-async def _render_once(html: str, output_path: Path, width: int) -> None:
-    browser = await _get_browser()
-    page = None
+async def _safe_download(client: httpx.AsyncClient, url: str, cache_dir: Path) -> str:
+    if not url or urlsplit(url).scheme.casefold() not in {"http", "https"}:
+        return ""
     try:
-        page = await browser.new_page(
-            viewport={"width": width, "height": 900},
-            device_scale_factor=1,
-            java_script_enabled=False,
+        return str(await _download_image(client, url, cache_dir))
+    except Exception as exc:  # noqa: BLE001 - each image degrades independently
+        parts = urlsplit(url)
+        label = f"{parts.netloc}{parts.path}"[:160]
+        logger.warning(
+            f"[Render] Remote image degraded: {label} ({type(exc).__name__}: {exc})"
         )
-        await page.route("**/*", _allow_card_image_only)
-        await page.set_content(
-            html,
-            wait_until="networkidle",
-            timeout=XFETCH_RENDER_TIMEOUT * 1000,
-        )
-        # A full-page screenshot is never shorter than the viewport. Keep the
-        # initial 900px viewport while remote images load, then collapse its
-        # height so short cards use their natural document height. Long cards
-        # still expand normally through full_page=True.
-        set_viewport_size = getattr(page, "set_viewport_size", None)
-        if set_viewport_size is not None:
-            await set_viewport_size({"width": width, "height": 1})
-        await page.screenshot(path=str(output_path), full_page=True, type="png")
-    finally:
-        if page is not None:
-            try:
-                await asyncio.wait_for(
-                    page.close(),
-                    timeout=_PAGE_CLOSE_TIMEOUT_SECONDS,
-                )
-            except asyncio.TimeoutError:
-                logger.warning("[Render] Page close timed out")
-            except Exception as exc:
-                logger.debug(f"[Render] Page close failed: {exc}")
+        return ""
 
 
-async def _html_to_png(html: str, output_path: Path, width: int = 600) -> None:
-    """Render one full-page card and recreate Chromium after a broken session."""
-    global _browser_uses
-    async with _render_gate:
-        try:
-            await asyncio.wait_for(
-                _render_once(html, output_path, width),
-                timeout=XFETCH_RENDER_TIMEOUT,
-            )
-        except asyncio.TimeoutError as exc:
-            await _close_browser("render timeout")
-            raise RuntimeError(
-                f"card rendering exceeded {XFETCH_RENDER_TIMEOUT}s"
-            ) from exc
-        except Exception:
-            # Playwright reports a WebSocket loss as a regular operation error.
-            # Never reuse that browser for the next scheduled render.
-            await _close_browser("render error or browser disconnect")
-            raise
-
-        _browser_uses += 1
-        if _browser_uses >= XFETCH_RENDER_BROWSER_MAX_USES:
-            await _close_browser("periodic memory recycle")
-
-
-
-def _render_conversation_html(conv: TweetConversation) -> str:
-    template = _env.get_template("conversation.html")
-    return template.render(
-        target=conv.target,
-        ancestors=conv.ancestors,
-        quote=conv.quote,
-    )
-
-
-def _render_live_html(title: str, members: list[str], start_time_display: str) -> str:
-    template = _env.get_template("live_alert.html")
-    return template.render(
-        event={
-            "title": title,
-            "members": members,
-            "start_time_display": start_time_display,
+def _is_emoji_base(codepoint: int) -> bool:
+    return (
+        0x1F000 <= codepoint <= 0x1FAFF
+        or 0x2600 <= codepoint <= 0x27BF
+        or codepoint
+        in {
+            0x00A9,
+            0x00AE,
+            0x203C,
+            0x2049,
+            0x2122,
+            0x2139,
+            0x3030,
+            0x303D,
+            0x3297,
+            0x3299,
         }
     )
 
 
-async def render_conversation_card(conv: TweetConversation) -> List[Path]:
-    """将对话渲染为图片，返回 PNG 文件路径列表。"""
-    CARD_DIR.mkdir(parents=True, exist_ok=True)
+def _fallback_emoji_list(text: str) -> list[str]:
+    found: list[str] = []
+    index = 0
+    while index < len(text):
+        codepoint = ord(text[index])
+        keycap = text[index] in "#*0123456789" and index + 1 < len(text)
+        if not _is_emoji_base(codepoint) and not keycap:
+            index += 1
+            continue
+        start = index
+        index += 1
+        if (
+            0x1F1E6 <= codepoint <= 0x1F1FF
+            and index < len(text)
+            and 0x1F1E6 <= ord(text[index]) <= 0x1F1FF
+        ):
+            index += 1
+        while index < len(text):
+            next_codepoint = ord(text[index])
+            if (
+                next_codepoint in {0xFE0E, 0xFE0F, 0x20E3}
+                or 0x1F3FB <= next_codepoint <= 0x1F3FF
+            ):
+                index += 1
+                continue
+            if next_codepoint == 0x200D and index + 1 < len(text):
+                index += 2
+                continue
+            break
+        found.append(text[start:index])
+    return found
 
-    if not conv.target:
-        logger.warning("render_conversation_card: 无 target 推文")
-        return []
 
+def _extract_emojis(texts: Iterable[str]) -> set[str]:
+    result: set[str] = set()
     try:
-        html = _render_conversation_html(conv)
-        target_id = conv.target.id
-        path = CARD_DIR / f"{target_id}.png"
-        await _html_to_png(html, path, width=650)
-        logger.info(f"渲染完成: {path}")
-        return [path]
-    except Exception as e:
-        logger.error(f"渲染卡片失败: {e}", exc_info=True)
+        import emoji
+
+        for text in texts:
+            result.update(item["emoji"] for item in emoji.emoji_list(text))
+    except ImportError:
+        for text in texts:
+            result.update(_fallback_emoji_list(text))
+    return result
+
+
+def _twemoji_url(value: str) -> str:
+    codepoints = "-".join(f"{ord(char):x}" for char in value if ord(char) != 0xFE0F)
+    return f"https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/{codepoints}.png"
+
+
+def _tweet_strings(item: TweetItem | None) -> list[str]:
+    if item is None:
         return []
+    return [item.author.name, item.author.screen_name, item.text, item.translated_text]
 
 
+def _tweet_spec(item: TweetItem, resolved: dict[str, str]) -> dict[str, Any]:
+    media = []
+    for value in item.media[:9]:
+        source = value.thumbnail_url if value.type == "video" else value.url
+        media.append({"path": resolved.get(source, ""), "video": value.type == "video"})
+    return {
+        "id": item.id,
+        "url": item.url,
+        "name": item.author.name,
+        "screen_name": item.author.screen_name,
+        "avatar_path": resolved.get(item.author.avatar_url, ""),
+        "text": item.text,
+        "translated_text": item.translated_text,
+        "created_at": item.created_at,
+        "media": media,
+        "likes": item.likes,
+        "retweets": item.retweets,
+        "replies": item.replies,
+        "views": item.views,
+    }
 
 
-def _render_sublist_html(active_core: list, muted_core: list, extra_subs: list) -> str:
-    template = _env.get_template("sublist.html")
-    return template.render(
-        active_core=active_core,
-        muted_core=muted_core,
-        extra_subs=extra_subs,
+def _prune_dir(path: Path, ttl: int, now: float) -> None:
+    if not path.exists():
+        return
+    for entry in path.iterdir():
+        try:
+            if entry.is_file() and now - entry.stat().st_mtime > ttl:
+                entry.unlink()
+        except OSError:
+            continue
+
+
+async def _prune_cache_if_due() -> None:
+    global _last_prune
+    now = time.time()
+    if now - _last_prune < 3600:
+        return
+    _last_prune = now
+    await asyncio.to_thread(_prune_dir, MEDIA_CACHE_DIR, _MEDIA_CACHE_TTL, now)
+    await asyncio.to_thread(_prune_dir, EMOJI_CACHE_DIR, _EMOJI_CACHE_TTL, now)
+
+
+def _http_client() -> httpx.AsyncClient:
+    return httpx.AsyncClient(
+        timeout=httpx.Timeout(XFETCH_RENDER_IMAGE_TIMEOUT),
+        follow_redirects=True,
+        max_redirects=3,
+        headers={"User-Agent": "nonebot-plugin-xfetch-pillow/2"},
     )
 
 
-def _render_calendar_html(month_view: dict) -> str:
-    template = _env.get_template("calendar.html")
-    return template.render(calendar=month_view)
+async def _resolve_assets(
+    urls: Iterable[str], texts: Iterable[str]
+) -> tuple[dict[str, str], dict[str, str]]:
+    unique_urls = {url for url in urls if url}
+    emoji_values = _extract_emojis(texts)
+    async with _http_client() as client:
+        url_list = list(unique_urls)
+        url_paths = await asyncio.gather(
+            *(_safe_download(client, url, MEDIA_CACHE_DIR) for url in url_list)
+        )
+        resolved = dict(zip(url_list, url_paths))
+        emoji_list = list(emoji_values)
+        emoji_paths = await asyncio.gather(
+            *(
+                _safe_download(client, _twemoji_url(value), EMOJI_CACHE_DIR)
+                for value in emoji_list
+            )
+        )
+    # Keep failed emoji keys too: the worker draws a stable local placeholder
+    # rather than silently dropping a glyph that the bundled CJK font lacks.
+    return resolved, dict(zip(emoji_list, emoji_paths))
+
+
+def _base_spec(
+    kind: str, output_path: Path, emoji_paths: dict[str, str]
+) -> dict[str, Any]:
+    return {
+        "kind": kind,
+        "output_path": str(output_path),
+        "format": "PNG",
+        "font_path": str(FONT_PATH),
+        "emoji_paths": emoji_paths,
+        "memory_limit_mb": XFETCH_RENDER_MEMORY_MB,
+        "max_image_pixels": _MAX_IMAGE_PIXELS,
+        "max_height": XFETCH_RENDER_MAX_HEIGHT,
+    }
+
+
+async def _terminate_process(process: asyncio.subprocess.Process) -> None:
+    if process.returncode is not None:
+        return
+    try:
+        process.terminate()
+    except ProcessLookupError:
+        return
+    try:
+        await asyncio.wait_for(process.wait(), timeout=3)
+    except asyncio.TimeoutError:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+        await process.wait()
+
+
+async def _run_worker(spec: dict[str, Any]) -> list[Path]:
+    if not FONT_PATH.is_file():
+        raise RuntimeError(f"bundled renderer font missing: {FONT_PATH}")
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+    token = uuid.uuid4().hex
+    spec_path = TEMP_DIR / f"{token}.spec.json"
+    result_path = TEMP_DIR / f"{token}.result.json"
+    spec_path.write_text(json.dumps(spec, ensure_ascii=False), encoding="utf-8")
+    process: asyncio.subprocess.Process | None = None
+    try:
+        process = await asyncio.create_subprocess_exec(
+            sys.executable,
+            str(WORKER_PATH),
+            str(spec_path),
+            str(result_path),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        _active_processes.add(process)
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(), timeout=XFETCH_RENDER_TIMEOUT
+            )
+        except (asyncio.TimeoutError, asyncio.CancelledError):
+            await _terminate_process(process)
+            raise
+        if process.returncode != 0:
+            detail = stderr.decode("utf-8", errors="replace")[-2000:]
+            raise RuntimeError(f"Pillow worker exited {process.returncode}: {detail}")
+        if not result_path.exists():
+            raise RuntimeError("Pillow worker produced no result manifest")
+        payload = json.loads(result_path.read_text(encoding="utf-8"))
+        paths = [Path(value) for value in payload.get("paths", [])]
+        if not paths:
+            raise RuntimeError("Pillow worker produced no images")
+        output_parent = Path(spec["output_path"]).parent.resolve()
+        for path in paths:
+            if path.resolve().parent != output_parent:
+                raise RuntimeError(f"worker returned an unexpected path: {path}")
+            await asyncio.to_thread(_validate_image, path)
+        if stdout:
+            logger.debug(
+                f"[Render] Pillow worker: {stdout.decode(errors='replace')[-1000:]}"
+            )
+        return paths
+    finally:
+        if process is not None:
+            _active_processes.discard(process)
+        spec_path.unlink(missing_ok=True)
+        result_path.unlink(missing_ok=True)
+
+
+async def _render_with_timeout(factory) -> list[Path]:
+    async with _render_gate:
+        await _prune_cache_if_due()
+        try:
+            return await asyncio.wait_for(factory(), timeout=XFETCH_RENDER_TIMEOUT)
+        except asyncio.TimeoutError as exc:
+            raise RuntimeError(
+                f"card rendering exceeded {XFETCH_RENDER_TIMEOUT}s"
+            ) from exc
+
+
+async def render_conversation_card(conv: TweetConversation) -> list[Path]:
+    """Render a complete conversation to one or more PNG files."""
+    if conv.target is None:
+        logger.warning("render_conversation_card: 无 target 推文")
+        return []
+    CARD_DIR.mkdir(parents=True, exist_ok=True)
+
+    async def render() -> list[Path]:
+        items = [*conv.ancestors, conv.target]
+        if conv.quote is not None:
+            items.append(conv.quote)
+        urls: list[str] = []
+        texts: list[str] = []
+        for item in items:
+            urls.append(item.author.avatar_url)
+            texts.extend(_tweet_strings(item))
+            for media in item.media[:9]:
+                urls.append(media.thumbnail_url if media.type == "video" else media.url)
+        resolved, emoji_paths = await _resolve_assets(urls, texts)
+        output = CARD_DIR / f"{conv.target.id}.png"
+        spec = _base_spec("conversation", output, emoji_paths)
+        spec.update(
+            ancestors=[_tweet_spec(item, resolved) for item in conv.ancestors],
+            target=_tweet_spec(conv.target, resolved),
+            quote=_tweet_spec(conv.quote, resolved) if conv.quote else None,
+        )
+        return await _run_worker(spec)
+
+    try:
+        paths = await _render_with_timeout(render)
+        logger.info(f"渲染完成: {', '.join(map(str, paths))}")
+        return paths
+    except Exception as exc:  # noqa: BLE001 - broadcaster skips one failed card
+        logger.error(f"渲染卡片失败: {exc}", exc_info=True)
+        return []
 
 
 async def render_sublist_card(active_core: list, muted_core: list, extra_subs: list):
-    """Render subscription list as PNG."""
-    import hashlib
-    MISC_DIR = CARD_DIR.parent / "misc"
-    MISC_DIR.mkdir(parents=True, exist_ok=True)
+    """Render the group subscription list as a PNG."""
+    misc_dir = CARD_DIR.parent / "misc"
+    misc_dir.mkdir(parents=True, exist_ok=True)
+
+    async def render() -> list[Path]:
+        texts = ["本群订阅", *active_core, *muted_core, *extra_subs]
+        _, emoji_paths = await _resolve_assets([], texts)
+        digest = hashlib.md5(
+            json.dumps(
+                [active_core, muted_core, extra_subs], ensure_ascii=False
+            ).encode()
+        ).hexdigest()[:8]
+        output = misc_dir / f"sublist_{digest}.png"
+        spec = _base_spec("sublist", output, emoji_paths)
+        spec.update(
+            active_core=active_core, muted_core=muted_core, extra_subs=extra_subs
+        )
+        return await _run_worker(spec)
+
     try:
-        html = _render_sublist_html(active_core, muted_core, extra_subs)
-        key = hashlib.md5(html.encode()).hexdigest()[:8]
-        path = MISC_DIR / f"sublist_{key}.png"
-        await _html_to_png(html, path, width=520)
-        return str(path).replace("\\", "/")
-    except Exception as e:
-        logger.error(f"Render sublist failed: {e}", exc_info=True)
+        return str((await _render_with_timeout(render))[0]).replace("\\", "/")
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Render sublist failed: {exc}", exc_info=True)
         return None
 
 
 async def render_calendar_card(month_view: dict):
-    """Render calendar as PNG."""
-    import hashlib
-    MISC_DIR = CARD_DIR.parent / "misc"
-    MISC_DIR.mkdir(parents=True, exist_ok=True)
+    """Render the monthly activity calendar as a 1680px Pillow image."""
+    misc_dir = CARD_DIR.parent / "misc"
+    misc_dir.mkdir(parents=True, exist_ok=True)
+
+    async def render() -> list[Path]:
+        calendar_spec = copy.deepcopy(month_view)
+        cover_urls: list[str] = []
+        texts = [
+            str(calendar_spec.get("month_label", "")),
+            str(calendar_spec.get("month_title", "")),
+        ]
+        for week in calendar_spec.get("weeks", []):
+            for day in week:
+                for event in day.get("events", []):
+                    texts.extend(
+                        [
+                            str(event.get("title", "")),
+                            *map(str, event.get("members", [])),
+                        ]
+                    )
+                    if event.get("show_image") and event.get("cover_url"):
+                        cover_urls.append(str(event["cover_url"]))
+        resolved, emoji_paths = await _resolve_assets(cover_urls, texts)
+        for week in calendar_spec.get("weeks", []):
+            for day in week:
+                for event in day.get("events", []):
+                    event["cover_path"] = resolved.get(
+                        str(event.get("cover_url", "")), ""
+                    )
+        digest = hashlib.md5(
+            json.dumps(month_view, ensure_ascii=False, sort_keys=True).encode()
+        ).hexdigest()[:8]
+        output = misc_dir / f"calendar_{digest}.png"
+        spec = _base_spec("calendar", output, emoji_paths)
+        spec["calendar"] = calendar_spec
+        return await _run_worker(spec)
+
     try:
-        html = _render_calendar_html(month_view)
-        key = hashlib.md5(html.encode()).hexdigest()[:8]
-        path = MISC_DIR / f"calendar_{key}.png"
-        await _html_to_png(html, path, width=1680)
-        return str(path).replace("\\", "/")
-    except Exception as e:
-        logger.error(f"Render calendar failed: {e}", exc_info=True)
+        return str((await _render_with_timeout(render))[0]).replace("\\", "/")
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Render calendar failed: {exc}", exc_info=True)
         return None
 
 
 async def render_live_alert(
-    title: str,
-    members: list[str],
-    start_time_display: str,
-) -> Optional[Path]:
-    """渲染直播通知卡片。"""
+    title: str, members: list[str], start_time_display: str
+) -> Path | None:
+    """Render a live reminder card."""
     CARD_DIR.mkdir(parents=True, exist_ok=True)
 
+    async def render() -> list[Path]:
+        _, emoji_paths = await _resolve_assets(
+            [], [title, *members, start_time_display]
+        )
+        digest = hashlib.md5(f"{title}{start_time_display}".encode()).hexdigest()[:8]
+        output = CARD_DIR / f"live_{digest}.png"
+        spec = _base_spec("live", output, emoji_paths)
+        spec.update(title=title, members=members, start_time_display=start_time_display)
+        return await _run_worker(spec)
+
     try:
-        html = _render_live_html(title, members, start_time_display)
-        import hashlib
-        key = hashlib.md5(f"{title}{start_time_display}".encode()).hexdigest()[:8]
-        path = CARD_DIR / f"live_{key}.png"
-        await _html_to_png(html, path, width=650)
-        return path
-    except Exception as e:
-        logger.error(f"渲染直播卡片失败: {e}", exc_info=True)
+        return (await _render_with_timeout(render))[0]
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"渲染直播卡片失败: {exc}", exc_info=True)
         return None
 
 
-async def shutdown():
-    """Release Chromium and its Playwright driver on NoneBot shutdown."""
-    async with _render_gate:
-        await _close_browser("shutdown")
+async def shutdown() -> None:
+    """Terminate any renderer subprocess still active during bot shutdown."""
+    processes = list(_active_processes)
+    if processes:
+        logger.info(f"[Render] Terminating {len(processes)} active Pillow worker(s)")
+    await asyncio.gather(
+        *(_terminate_process(process) for process in processes), return_exceptions=True
+    )

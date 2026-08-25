@@ -1,4 +1,4 @@
-"""Jinja2 + Playwright HTML screenshot rendering engine with card cache management."""
+"""Isolated Pillow rendering with card cache management."""
 
 import time
 from pathlib import Path

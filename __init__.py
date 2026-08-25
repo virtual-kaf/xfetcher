@@ -8,6 +8,10 @@ service entry point, deliberately avoids importing commands and schedulers.
 from nonebot import get_driver
 
 try:
+    if not __package__:
+        # Pytest can collect this root-mapped package file as bare ``__init__``.
+        # In that case relative plugin imports are intentionally unavailable.
+        raise ValueError("package context is unavailable")
     get_driver()
 except ValueError:
     __all__: list[str] = []
@@ -24,8 +28,8 @@ else:
         xfilter_cmd,
     )
     from .debug import gen_cmd
-    from .scheduler import check_lives, check_xfetch
     from .renderer import shutdown as shutdown_renderer
+    from .scheduler import check_lives, check_xfetch
 
     get_driver().on_shutdown(shutdown_renderer)
 

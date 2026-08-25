@@ -1,60 +1,54 @@
-import pytest
+import asyncio
+import io
+import sys
+from pathlib import Path
 
+import httpx
+import pytest
 from nonebot_plugin_xfetch.models.tweet import (
     TweetAuthor,
     TweetConversation,
     TweetItem,
-    TweetMedia,
 )
 from nonebot_plugin_xfetch.renderer import engine
+from PIL import Image
 
 
 def _tweet(tweet_id: str, text: str = "post") -> TweetItem:
     return TweetItem(
         id=tweet_id,
-        author=TweetAuthor(name=tweet_id, screen_name=tweet_id),
+        url=f"https://x.com/test/status/{tweet_id}",
+        author=TweetAuthor(name="测试作者", screen_name="tester"),
         text=text,
+        translated_text="这是翻译",
+        likes=3,
+        retweets=2,
+        replies=1,
+        views=10,
     )
 
 
-def test_conversation_html_keeps_full_thread_text_and_media():
-    ancestors = [_tweet(f"ancestor-{index}") for index in range(5)]
-    target = _tweet("target", "x" * 2500)
-    target.media = [
-        TweetMedia(
-            url="https://pbs.twimg.com/media/photo?format=jpg&name=large",
-            type="photo",
-        ),
-        TweetMedia(
-            url="https://video.twimg.com/video.mp4",
-            thumbnail_url="https://pbs.twimg.com/tweet_video_thumb/poster.jpg",
-            type="video",
-        ),
-    ]
-
-    html = engine._render_conversation_html(
-        TweetConversation(ancestors=ancestors, target=target)
-    )
-
-    assert "ancestor-0" in html
-    assert "ancestor-4" in html
-    assert "x" * 2500 in html
-    assert "name=large" in html
-    assert "tweet_video_thumb/poster.jpg" in html
-    assert "video.twimg.com/video.mp4" not in html
-    assert "视频（请查看原文）" not in html
+def _worker_spec(tmp_path: Path, *, max_height: int = 4096) -> dict:
+    target = _tweet("target", "日文と中文 mixed text。" * 140)
+    return {
+        "kind": "conversation",
+        "output_path": str(tmp_path / "card.png"),
+        "format": "PNG",
+        "font_path": str(engine.FONT_PATH),
+        "emoji_paths": {},
+        "memory_limit_mb": 384,
+        "max_image_pixels": 12_000_000,
+        "max_height": max_height,
+        "ancestors": [],
+        "target": engine._tweet_spec(target, {}),
+        "quote": None,
+    }
 
 
-def test_conversation_html_uses_placeholder_without_video_thumbnail():
-    target = _tweet("target")
-    target.media = [
-        TweetMedia(url="https://video.twimg.com/video.mp4", type="video")
-    ]
-
-    html = engine._render_conversation_html(TweetConversation(target=target))
-
-    assert "视频（请查看原文）" in html
-    assert "video.twimg.com/video.mp4" not in html
+def _png_bytes() -> bytes:
+    output = io.BytesIO()
+    Image.new("RGB", (20, 20), "red").save(output, format="PNG")
+    return output.getvalue()
 
 
 def test_twitter_media_url_is_bounded_without_changing_other_hosts():
@@ -65,144 +59,170 @@ def test_twitter_media_url_is_bounded_without_changing_other_hosts():
     assert "format=jpg" in bounded
     assert "name=medium" in bounded
     assert "name=orig" not in bounded
-    assert (
-        engine._bounded_image_url("https://example.com/image.jpg?name=orig")
-        == "https://example.com/image.jpg?name=orig"
+    assert engine._bounded_image_url("https://example.com/a.jpg?name=orig") == (
+        "https://example.com/a.jpg?name=orig"
     )
 
 
-class _FakeRequest:
-    def __init__(self, resource_type="image"):
-        self.resource_type = resource_type
-        self.url = "https://pbs.twimg.com/media/card.jpg?name=orig"
+@pytest.mark.asyncio
+async def test_remote_image_is_streamed_validated_and_cached(tmp_path):
+    calls = 0
 
+    def handler(_request):
+        nonlocal calls
+        calls += 1
+        return httpx.Response(
+            200, headers={"content-type": "image/png"}, content=_png_bytes()
+        )
 
-class _FakeResponse:
-    def __init__(self, *, content_length="1024"):
-        self.ok = True
-        self.status = 200
-        self.headers = {
-            "content-type": "image/jpeg",
-            "content-length": content_length,
-        }
-        self.disposed = False
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        first = await engine._download_image(
+            client, "https://example.com/image", tmp_path
+        )
+        second = await engine._download_image(
+            client, "https://example.com/image", tmp_path
+        )
 
-    async def dispose(self):
-        self.disposed = True
-
-
-class _FakeRoute:
-    def __init__(self, *, response=None, error=None, resource_type="image"):
-        self.request = _FakeRequest(resource_type)
-        self.response = response
-        self.error = error
-        self.fetch_kwargs = None
-        self.fulfill_kwargs = None
-        self.aborted = False
-
-    async def fetch(self, **kwargs):
-        self.fetch_kwargs = kwargs
-        if self.error is not None:
-            raise self.error
-        return self.response
-
-    async def fulfill(self, **kwargs):
-        self.fulfill_kwargs = kwargs
-
-    async def abort(self):
-        self.aborted = True
+    assert first == second
+    assert calls == 1
+    engine._validate_image(first)
 
 
 @pytest.mark.asyncio
-async def test_remote_image_uses_timeout_and_disposes_response():
-    response = _FakeResponse()
-    route = _FakeRoute(response=response)
+@pytest.mark.parametrize(
+    ("headers", "content"),
+    [
+        ({"content-type": "text/html"}, b"no"),
+        ({"content-type": "image/png"}, b"broken"),
+        ({"content-type": "image/png", "content-length": str(30_000_000)}, b""),
+    ],
+)
+async def test_remote_image_failures_degrade_to_empty_path(tmp_path, headers, content):
+    def handler(_request):
+        return httpx.Response(200, headers=headers, content=content)
 
-    await engine._allow_card_image_only(route)
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        path = await engine._safe_download(
+            client, "https://example.com/image", tmp_path
+        )
 
-    assert route.fetch_kwargs["timeout"] == engine.XFETCH_RENDER_IMAGE_TIMEOUT * 1000
-    assert "name=medium" in route.fetch_kwargs["url"]
-    assert route.fulfill_kwargs == {"response": response}
-    assert response.disposed is True
-
-
-@pytest.mark.asyncio
-async def test_remote_image_failure_degrades_to_transparent_png():
-    route = _FakeRoute(error=TimeoutError("remote image stalled"))
-
-    await engine._allow_card_image_only(route)
-
-    assert route.fulfill_kwargs["content_type"] == "image/png"
-    assert route.fulfill_kwargs["body"] == engine._TRANSPARENT_PNG
+    assert path == ""
 
 
 @pytest.mark.asyncio
-async def test_oversized_remote_image_degrades_and_is_disposed():
-    response = _FakeResponse(
-        content_length=str(engine.XFETCH_RENDER_IMAGE_MAX_BYTES + 1)
-    )
-    route = _FakeRoute(response=response)
+async def test_isolated_worker_paginates_without_truncating(tmp_path, monkeypatch):
+    monkeypatch.setattr(engine, "TEMP_DIR", tmp_path / "worker-temp")
 
-    await engine._allow_card_image_only(route)
+    paths = await engine._run_worker(_worker_spec(tmp_path, max_height=900))
 
-    assert route.fulfill_kwargs["content_type"] == "image/png"
-    assert response.disposed is True
-
-
-@pytest.mark.asyncio
-async def test_non_image_remote_resource_is_aborted():
-    route = _FakeRoute(resource_type="font")
-
-    await engine._allow_card_image_only(route)
-
-    assert route.aborted is True
-    assert route.fetch_kwargs is None
-
-
-class _FakePage:
-    def __init__(self):
-        self.content_kwargs = None
-        self.screenshot_kwargs = None
-        self.closed = False
-
-    async def route(self, *_args):
-        return None
-
-    async def set_content(self, _html, **kwargs):
-        self.content_kwargs = kwargs
-
-    async def screenshot(self, **kwargs):
-        self.screenshot_kwargs = kwargs
-
-    async def close(self):
-        self.closed = True
-
-
-class _FakeBrowser:
-    def __init__(self, page):
-        self.page = page
-
-    async def new_page(self, **_kwargs):
-        return self.page
+    assert len(paths) >= 2
+    assert all(path.exists() for path in paths)
+    assert all(Image.open(path).width == 800 for path in paths)
+    assert all(Image.open(path).height <= 900 for path in paths)
 
 
 @pytest.mark.asyncio
-async def test_render_waits_for_networkidle_and_captures_full_page(
-    monkeypatch, tmp_path
+async def test_worker_timeout_terminates_process_and_cleans_manifest(
+    tmp_path, monkeypatch
 ):
-    page = _FakePage()
-    browser = _FakeBrowser(page)
+    slow_worker = tmp_path / "slow_worker.py"
+    slow_worker.write_text("import time\ntime.sleep(30)\n", encoding="utf-8")
+    worker_temp = tmp_path / "worker-temp"
+    real_worker = engine.WORKER_PATH
+    monkeypatch.setattr(engine, "WORKER_PATH", slow_worker)
+    monkeypatch.setattr(engine, "TEMP_DIR", worker_temp)
+    monkeypatch.setattr(engine, "XFETCH_RENDER_TIMEOUT", 0.05)
 
-    async def get_browser():
-        return browser
+    with pytest.raises(asyncio.TimeoutError):
+        await engine._run_worker(_worker_spec(tmp_path))
 
-    monkeypatch.setattr(engine, "_get_browser", get_browser)
+    assert not engine._active_processes
+    assert not list(worker_temp.glob("*.json"))
 
-    await engine._render_once("<html></html>", tmp_path / "card.png", 650)
+    # A timed-out child has no reusable state; the next render starts cleanly.
+    monkeypatch.setattr(engine, "WORKER_PATH", real_worker)
+    monkeypatch.setattr(engine, "XFETCH_RENDER_TIMEOUT", 10)
+    paths = await engine._run_worker(_worker_spec(tmp_path))
+    assert paths and paths[0].is_file()
 
-    assert page.content_kwargs == {
-        "wait_until": "networkidle",
-        "timeout": engine.XFETCH_RENDER_TIMEOUT * 1000,
-    }
-    assert page.screenshot_kwargs["full_page"] is True
-    assert page.closed is True
+
+@pytest.mark.asyncio
+async def test_shutdown_terminates_an_active_worker():
+    process = await asyncio.create_subprocess_exec(
+        sys.executable, "-c", "import time; time.sleep(30)"
+    )
+    engine._active_processes.add(process)
+
+    await engine.shutdown()
+
+    engine._active_processes.discard(process)
+    assert process.returncode is not None
+
+
+@pytest.mark.asyncio
+async def test_conversation_spec_keeps_all_text_and_translation(monkeypatch, tmp_path):
+    captured = {}
+    ancestor = _tweet("ancestor", "ancestor text")
+    target = _tweet("target", "x" * 2500)
+    quote = _tweet("quote", "quoted text")
+
+    async def resolve(_urls, _texts):
+        return {}, {}
+
+    async def run(spec):
+        captured.update(spec)
+        output = tmp_path / "captured.png"
+        Image.new("RGB", (10, 10)).save(output)
+        return [output]
+
+    monkeypatch.setattr(engine, "CARD_DIR", tmp_path)
+    monkeypatch.setattr(engine, "_resolve_assets", resolve)
+    monkeypatch.setattr(engine, "_run_worker", run)
+
+    paths = await engine.render_conversation_card(
+        TweetConversation(ancestors=[ancestor], target=target, quote=quote)
+    )
+
+    assert paths
+    assert captured["ancestors"][0]["text"] == "ancestor text"
+    assert captured["target"]["text"] == "x" * 2500
+    assert captured["target"]["translated_text"] == "这是翻译"
+    assert captured["quote"]["translated_text"] == "这是翻译"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind", ["sublist", "live", "calendar"])
+async def test_auxiliary_pillow_cards_render(kind, tmp_path, monkeypatch):
+    monkeypatch.setattr(engine, "TEMP_DIR", tmp_path / "worker-temp")
+    spec = engine._base_spec(kind, tmp_path / f"{kind}.png", {})
+    if kind == "sublist":
+        spec.update(active_core=["Sooda_oda"], muted_core=[], extra_subs=["other"])
+    elif kind == "live":
+        spec.update(
+            title="测试直播", members=["Sooda_oda"], start_time_display="20:00 CST"
+        )
+    else:
+        day = {"day": 1, "in_month": True, "is_today": True, "events": []}
+        spec["calendar"] = {
+            "month_label": "AUGUST 2026",
+            "month_title": "2026年8月",
+            "date_range": "08/01 - 08/31",
+            "weeks": [[dict(day, day=index + 1) for index in range(7)]],
+            "page": 1,
+            "total_pages": 1,
+            "month_event_count": 0,
+            "total_event_count": 0,
+        }
+
+    paths = await engine._run_worker(spec)
+
+    assert len(paths) == 1
+    with Image.open(paths[0]) as rendered:
+        assert rendered.width == (1680 if kind == "calendar" else 800)
+
+
+def test_renderer_has_no_browser_or_template_dependency():
+    source = Path(engine.__file__).read_text(encoding="utf-8")
+    assert "playwright" not in source.casefold()
+    assert "jinja" not in source.casefold()
+    assert "wait_until" not in source
