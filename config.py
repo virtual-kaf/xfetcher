@@ -153,6 +153,18 @@ XFETCH_FETCH_CONCURRENCY: int = _get_config_int(
 XFETCH_RENDER_TIMEOUT: int = _get_config_int(
     "KABUBU_XFETCH_RENDER_TIMEOUT", 90, minimum=30, maximum=180
 )
+XFETCH_RENDER_IMAGE_TIMEOUT: int = _get_config_int(
+    "KABUBU_XFETCH_RENDER_IMAGE_TIMEOUT", 6, minimum=2, maximum=30
+)
+XFETCH_RENDER_IMAGE_MAX_BYTES: int = _get_config_int(
+    "KABUBU_XFETCH_RENDER_IMAGE_MAX_BYTES",
+    5 * 1024 * 1024,
+    minimum=256 * 1024,
+    maximum=20 * 1024 * 1024,
+)
+XFETCH_RENDER_IMAGE_CONCURRENCY: int = _get_config_int(
+    "KABUBU_XFETCH_RENDER_IMAGE_CONCURRENCY", 4, minimum=1, maximum=8
+)
 XFETCH_RENDER_MAX_HEIGHT: int = _get_config_int(
     "KABUBU_XFETCH_RENDER_MAX_HEIGHT", 4096, minimum=800, maximum=8192
 )
@@ -160,7 +172,7 @@ XFETCH_RENDER_MAX_THREAD_ITEMS: int = _get_config_int(
     "KABUBU_XFETCH_RENDER_MAX_THREAD_ITEMS", 3, minimum=1, maximum=12
 )
 XFETCH_RENDER_BROWSER_MAX_USES: int = _get_config_int(
-    "KABUBU_XFETCH_RENDER_BROWSER_MAX_USES", 20, minimum=1, maximum=100
+    "KABUBU_XFETCH_RENDER_BROWSER_MAX_USES", 5, minimum=1, maximum=100
 )
 
 # 卡片

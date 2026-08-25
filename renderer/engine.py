@@ -1,15 +1,22 @@
 """Jinja2 + Playwright HTML 截图渲染引擎。"""
 
 import asyncio
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from pathlib import Path
 from typing import List, Optional
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from nonebot import logger
 
-from ..config import CARD_DIR, XFETCH_RENDER_BROWSER_MAX_USES, XFETCH_RENDER_TIMEOUT
+from ..config import (
+    CARD_DIR,
+    XFETCH_RENDER_BROWSER_MAX_USES,
+    XFETCH_RENDER_IMAGE_CONCURRENCY,
+    XFETCH_RENDER_IMAGE_MAX_BYTES,
+    XFETCH_RENDER_IMAGE_TIMEOUT,
+    XFETCH_RENDER_TIMEOUT,
+)
 from ..models.tweet import TweetConversation
 
 
@@ -25,17 +32,93 @@ _browser = None
 _playwright = None
 _browser_lock = asyncio.Lock()
 _render_gate = asyncio.Semaphore(1)
+_image_request_gate = asyncio.Semaphore(XFETCH_RENDER_IMAGE_CONCURRENCY)
 _browser_uses = 0
+_BROWSER_CLOSE_TIMEOUT_SECONDS = 5
+_PAGE_CLOSE_TIMEOUT_SECONDS = 3
+
+# A transparent image keeps the card layout stable when one remote CDN request
+# times out or exceeds the safe compressed-size limit.
+_TRANSPARENT_PNG = bytes.fromhex(
+    "89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c02"
+    "0000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082"
+)
 
 
-# Full-page cards deliberately keep original remote media and natural height.
+# Full-page cards keep remote-media slots and their natural document height.
+
+def _bounded_image_url(url: str) -> str:
+    """Ask Twitter's CDN for a card-sized image instead of the original."""
+    parts = urlsplit(url)
+    if parts.hostname != "pbs.twimg.com" or not parts.path.startswith("/media/"):
+        return url
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["name"] = "medium"
+    return urlunsplit(
+        (parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment)
+    )
+
+
+async def _fulfill_image_fallback(route) -> None:
+    """Resolve a failed image request without keeping networkidle pending."""
+    try:
+        await route.fulfill(
+            status=200,
+            content_type="image/png",
+            body=_TRANSPARENT_PNG,
+        )
+    except Exception:
+        # The page may already be closing because the render itself timed out.
+        pass
+
 
 async def _allow_card_image_only(route) -> None:
-    """Cards have inline CSS, so block every external resource but images."""
-    if route.request.resource_type == "image":
-        await route.continue_()
-    else:
+    """Fetch images with a short deadline; block all other remote resources."""
+    if route.request.resource_type != "image":
         await route.abort()
+        return
+
+    response = None
+    source_url = route.request.url
+    try:
+        async with _image_request_gate:
+            response = await route.fetch(
+                url=_bounded_image_url(source_url),
+                timeout=XFETCH_RENDER_IMAGE_TIMEOUT * 1000,
+                max_redirects=3,
+            )
+            content_type = response.headers.get("content-type", "")
+            raw_length = response.headers.get("content-length", "")
+            try:
+                content_length = int(raw_length)
+            except (TypeError, ValueError):
+                content_length = 0
+            if (
+                not response.ok
+                or not content_type.casefold().startswith("image/")
+                or content_length > XFETCH_RENDER_IMAGE_MAX_BYTES
+            ):
+                raise RuntimeError(
+                    f"unsafe image response status={response.status} "
+                    f"content_type={content_type!r} bytes={content_length}"
+                )
+            await route.fulfill(response=response)
+    except Exception as exc:
+        parts = urlsplit(source_url)
+        label = f"{parts.netloc}{parts.path}"[:160]
+        reason = (
+            str(exc)
+            if isinstance(exc, RuntimeError)
+            else type(exc).__name__
+        )
+        logger.warning(f"[Render] Remote image degraded: {label} ({reason})")
+        await _fulfill_image_fallback(route)
+    finally:
+        if response is not None:
+            try:
+                await response.dispose()
+            except Exception:
+                pass
 
 
 async def _close_browser(reason: str) -> None:
@@ -52,12 +135,22 @@ async def _close_browser(reason: str) -> None:
         logger.info(f"[Render] Releasing browser: {reason}")
     if browser is not None:
         try:
-            await browser.close()
+            await asyncio.wait_for(
+                browser.close(),
+                timeout=_BROWSER_CLOSE_TIMEOUT_SECONDS,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("[Render] Browser close timed out; dropping process handle")
         except Exception as exc:  # Browser may already be disconnected.
             logger.warning(f"[Render] Browser close failed: {exc}")
     if playwright is not None:
         try:
-            await playwright.stop()
+            await asyncio.wait_for(
+                playwright.stop(),
+                timeout=_BROWSER_CLOSE_TIMEOUT_SECONDS,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("[Render] Playwright stop timed out")
         except Exception as exc:
             logger.warning(f"[Render] Playwright stop failed: {exc}")
 
@@ -98,9 +191,15 @@ async def _get_browser():
                     "--no-sandbox",
                     "--disable-setuid-sandbox",
                     "--disable-gpu",
+                    "--disable-dev-shm-usage",
                     "--disable-extensions",
                     "--disable-background-networking",
+                    "--disable-breakpad",
+                    "--disable-component-update",
                     "--disable-sync",
+                    "--renderer-process-limit=1",
+                    "--disk-cache-size=1",
+                    "--media-cache-size=1",
                     "--no-first-run",
                     "--no-default-browser-check",
                     "--mute-audio",
@@ -142,7 +241,12 @@ async def _render_once(html: str, output_path: Path, width: int) -> None:
     finally:
         if page is not None:
             try:
-                await page.close()
+                await asyncio.wait_for(
+                    page.close(),
+                    timeout=_PAGE_CLOSE_TIMEOUT_SECONDS,
+                )
+            except asyncio.TimeoutError:
+                logger.warning("[Render] Page close timed out")
             except Exception as exc:
                 logger.debug(f"[Render] Page close failed: {exc}")
 
@@ -261,7 +365,11 @@ async def render_calendar_card(month_view: dict):
         return None
 
 
-async def render_live_alert(title: str, members: list[str], start_time_display: str) -> Optional[Path]:
+async def render_live_alert(
+    title: str,
+    members: list[str],
+    start_time_display: str,
+) -> Optional[Path]:
     """渲染直播通知卡片。"""
     CARD_DIR.mkdir(parents=True, exist_ok=True)
 
