@@ -118,6 +118,26 @@ PLUGIN_DIR: pathlib.Path = pathlib.Path(__file__).resolve().parent
 DATA_DIR: pathlib.Path = PLUGIN_DIR / "data"
 CARD_DIR: pathlib.Path = PLUGIN_DIR / "data" / "cards"
 
+# SnowLuma runs in Docker and reads outbound images through a shared bind
+# mount.  NoneBot copies a rendered image to the host path, while the OneBot
+# message references the corresponding path inside the container.
+XFETCH_SHARED_IMAGE_HOST_DIR: pathlib.Path = pathlib.Path(
+    _get_config_str(
+        "KABUBU_XFETCH_SHARED_IMAGE_HOST_DIR",
+        "/home/admin/snowluma/data/xfetch_cards",
+    )
+)
+XFETCH_SHARED_IMAGE_CONTAINER_DIR: str = _get_config_str(
+    "KABUBU_XFETCH_SHARED_IMAGE_CONTAINER_DIR",
+    "/app/data/xfetch_cards",
+).rstrip("/")
+XFETCH_SHARED_IMAGE_TTL_SECONDS: int = _get_config_int(
+    "KABUBU_XFETCH_SHARED_IMAGE_TTL_SECONDS",
+    3600,
+    minimum=60,
+    maximum=86400,
+)
+
 # 运行参数
 MAX_POST_AGE: timedelta = timedelta(hours=6)
 REQUEST_TIMEOUT: float = 120.0

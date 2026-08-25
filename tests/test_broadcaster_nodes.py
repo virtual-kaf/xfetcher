@@ -44,12 +44,14 @@ class _ForwardFailingBot(_FakeBot):
             raise RuntimeError("forward unavailable")
 
 
-def _base64_segment(_path):
-    return MessageSegment.image(b"PNG")
+def _shared_file_segment(path):
+    return MessageSegment.image(
+        f"file:///app/data/xfetch_cards/{Path(path).name}"
+    )
 
 
-def _base64_content(_path):
-    return str(_base64_segment(_path))
+def _shared_file_content(path):
+    return str(_shared_file_segment(path))
 
 
 def test_water_post_classification():
@@ -63,12 +65,17 @@ def test_water_post_classification():
     assert broadcaster._is_water_post(long_reply) is False
 
 
-def test_merge_nodes_embed_base64_images(tmp_path):
+def test_merge_nodes_use_shared_file_images(monkeypatch, tmp_path):
     first = tmp_path / "first.png"
     second = tmp_path / "second.png"
     first.write_bytes(b"first")
     second.write_bytes(b"second")
 
+    monkeypatch.setattr(
+        broadcaster,
+        "image_cq_from_path",
+        _shared_file_content,
+    )
     nodes = broadcaster._build_image_nodes([
         (_conversation("1"), [first], "virtual_kaf", False),
         (_conversation("2"), [second], "virtual_kaf", False),
@@ -77,8 +84,8 @@ def test_merge_nodes_embed_base64_images(tmp_path):
     assert len(nodes) == 2
     for node in nodes:
         content = node["data"]["content"]
-        assert "base64://" in content
-        assert "file:///" not in content
+        assert "file:///app/data/xfetch_cards/" in content
+        assert "base64://" not in content
 
 
 def _prepare(monkeypatch, *, filter_water: bool):
@@ -86,8 +93,8 @@ def _prepare(monkeypatch, *, filter_water: bool):
         return [Path(f"{conv.target.id}.png")]
 
     monkeypatch.setattr(broadcaster, "render_conversation_card", render)
-    monkeypatch.setattr(broadcaster, "image_segment_from_path", _base64_segment)
-    monkeypatch.setattr(broadcaster, "image_cq_from_path", _base64_content)
+    monkeypatch.setattr(broadcaster, "image_segment_from_path", _shared_file_segment)
+    monkeypatch.setattr(broadcaster, "image_cq_from_path", _shared_file_content)
     monkeypatch.setattr(
         broadcaster,
         "get_all_group_configs",
@@ -100,7 +107,7 @@ def _prepare(monkeypatch, *, filter_water: bool):
 
 
 @pytest.mark.asyncio
-async def test_single_non_water_post_sends_base64_image(monkeypatch):
+async def test_single_non_water_post_sends_shared_file_image(monkeypatch):
     _prepare(monkeypatch, filter_water=True)
     bot = _FakeBot()
 
@@ -109,11 +116,11 @@ async def test_single_non_water_post_sends_base64_image(monkeypatch):
     assert [call[0] for call in bot.calls] == ["send_group_msg"]
     image = bot.calls[0][1]["message"]
     assert image.type == "image"
-    assert image.data["file"].startswith("base64://")
+    assert image.data["file"] == "file:///app/data/xfetch_cards/1.png"
 
 
 @pytest.mark.asyncio
-async def test_multiple_posts_use_base64_merge_forward(monkeypatch):
+async def test_multiple_posts_use_shared_file_merge_forward(monkeypatch):
     _prepare(monkeypatch, filter_water=True)
     bot = _FakeBot()
 
@@ -124,12 +131,12 @@ async def test_multiple_posts_use_base64_merge_forward(monkeypatch):
 
     assert [call[0] for call in bot.calls] == ["send_group_forward_msg"]
     for node in bot.calls[0][1]["messages"]:
-        assert "base64://" in node["data"]["content"]
-        assert "file:///" not in node["data"]["content"]
+        assert "file:///app/data/xfetch_cards/" in node["data"]["content"]
+        assert "base64://" not in node["data"]["content"]
 
 
 @pytest.mark.asyncio
-async def test_merge_fallback_reuses_base64_content(monkeypatch):
+async def test_merge_fallback_reuses_shared_file_content(monkeypatch):
     _prepare(monkeypatch, filter_water=True)
     async def no_sleep(_delay):
         return None
@@ -148,8 +155,8 @@ async def test_merge_fallback_reuses_base64_content(monkeypatch):
         "send_group_msg",
     ]
     for _api, kwargs in bot.calls[1:]:
-        assert "base64://" in kwargs["message"]
-        assert "file:///" not in kwargs["message"]
+        assert "file:///app/data/xfetch_cards/" in kwargs["message"]
+        assert "base64://" not in kwargs["message"]
 
 
 @pytest.mark.asyncio
