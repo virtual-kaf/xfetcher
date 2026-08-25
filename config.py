@@ -107,7 +107,7 @@ CORE_MEMBERS: list[str] = [
 ]
 
 OPTIONAL_MEMBERS: list[str] = [
-    "CIEL_VanillaSky", "Sooda_oda", "KUUSOU_virtual", "kurogaki0311",
+    "CIEL_VanillaSky", "sooda_oda", "KUUSOU_virtual", "kurogaki0311",
     "ASU_virtual", "BEMA_virtual", "garasumiya_gr", "orihime_gr",
     "kakyoin_gr", "hinageshi_gr", "mikoto_gr", "yunagi_gr", 
     "qurux2_flower", "GuiAnoDayo", "neuron_yz", "eumza1","huyuyasumi_"
