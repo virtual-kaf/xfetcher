@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="tweet-card" style="width: 500px; text-align: left;">
+  <div style="font-size: 20px; font-weight: 800; margin-bottom: 16px;">📋 本群订阅</div>
+
+  {% if active_core %}
+  <div style="font-size: 14px; color: #1d9bf0; font-weight: 700; margin: 12px 0 6px;">🔵 核心成员（默认推送）</div>
+  {% for m in active_core %}
+  <div style="font-size: 15px; color: #0f1419; padding: 4px 0;">    @{{ m }}</div>
+  {% endfor %}
+  {% endif %}
+
+  {% if muted_core %}
+  <div style="font-size: 14px; color: #71767b; font-weight: 700; margin: 12px 0 6px;">🔕 已屏蔽核心成员</div>
+  {% for m in muted_core %}
+  <div style="font-size: 15px; color: #71767b; padding: 4px 0;">    @{{ m }}</div>
+  {% endfor %}
+  {% endif %}
+
+  {% if extra_subs %}
+  <div style="font-size: 14px; color: #00ba7c; font-weight: 700; margin: 12px 0 6px;">🟢 额外订阅</div>
+  {% for m in extra_subs %}
+  <div style="font-size: 15px; color: #0f1419; padding: 4px 0;">    @{{ m }}</div>
+  {% endfor %}
+  {% endif %}
+
+  {% if not active_core and not muted_core and not extra_subs %}
+  <div style="font-size: 15px; color: #71767b; padding: 8px 0;">暂无订阅</div>
+  {% endif %}
+</div>
+{% endblock %}

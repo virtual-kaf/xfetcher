@@ -1,0 +1,2273 @@
+[
+  {
+    "event_id": "f14f675f487df83ff7046a8a1400ca1c",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "春猿火 杂谈直播",
+    "start_time_utc": "2026-06-29T16:15:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "5cd61e866b8442aadec7572cf62e1194",
+    "members": [
+      "kaf_info"
+    ],
+    "title": "ぱんぱかカフぃ最终回",
+    "start_time_utc": "2026-06-30T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e6af8c9cf36623743315c1b966f03f9a",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "理芽×Nero 首次合作直播",
+    "start_time_utc": "2026-07-01T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "568e861b115846af7455296a454a5301",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "Space直播（明透共演）",
+    "start_time_utc": "2026-07-01T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d578cd929cd1460fcac8625d3d955492",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "あすべま合作咖啡厅",
+    "start_time_utc": "2026-07-03T00:00:00Z",
+    "is_precise": false,
+    "notified": false
+  },
+  {
+    "event_id": "45582fe171b20ec4d54afd0b41c476bb",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "节奏天国直播",
+    "start_time_utc": "2026-07-03T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d4ec50f014fd1d0dc6da76f8ad75856a",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "与琶舞酱的合作翻唱第二弹",
+    "start_time_utc": "2026-07-04T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "0accc1537e0701c097d34b62acc5023a",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "新翻唱歌曲发布",
+    "start_time_utc": "2026-07-04T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "57a76c8bff9a2691cb55a02bfc23782a",
+    "title": "明透&琶舞 首次歌枠直播「Star Light LIVE」",
+    "start_time_utc": "2026-07-05T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "members": [
+      "BEMA_virtual",
+      "RIM_virtual",
+      "ASU_virtual"
+    ]
+  },
+  {
+    "event_id": "71f55a51a8203b88bd6e7d03747933af",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪机生放送 节奏天国",
+    "start_time_utc": "2026-07-06T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "8d1e14534b00390b2de8049bd5fff99b",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "杂谈直播（歌回幕后与新曲）",
+    "start_time_utc": "2026-07-07T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e5f3ba1d8b90fb475e7a570f03114590",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "MAISON KOKO夏季商品发售",
+    "start_time_utc": "2026-07-07T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "c9b57600faf2c5c2338e57234aadcfff",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "MV公开",
+    "start_time_utc": "2026-07-08T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "7b5663c03b2dcd46d9e4914746daaa41",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "冰夏至直播",
+    "start_time_utc": "2026-07-08T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f4616c6766bbb1fefd6ef429ef23f386",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "御莉姫直播",
+    "start_time_utc": "2026-07-09T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "a64557b18c583ee9aab3688612b843dd",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "歌回直播",
+    "start_time_utc": "2026-07-10T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "2222ff46e1983743c22f4ce86b5a3f05",
+    "members": [
+      "harusaruhi",
+      "isekaijoucho"
+    ],
+    "title": "神椿報奏部 vol.62",
+    "start_time_utc": "2026-07-11T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "18067b0063e00735bcd5fbf19194a420",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "GOLD DISC活动",
+    "start_time_utc": "2026-07-11T14:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "80d495cabd8412934517728b1d1841b6",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "御莉姫生放送",
+    "start_time_utc": "2025-07-09T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "3691044c0f4c09805e489df308355a63",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "神椿報奏部",
+    "start_time_utc": "2025-07-15T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "af1911ec22edc8684cbf09ceb7ff1815",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "配信のおしらせ",
+    "start_time_utc": "2025-07-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "80d495cabd8412934517728b1d1841b6",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "御莉姫生放送",
+    "start_time_utc": "2025-07-09T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "3691044c0f4c09805e489df308355a63",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "神椿報奏部",
+    "start_time_utc": "2025-07-15T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "af1911ec22edc8684cbf09ceb7ff1815",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "配信のおしらせ",
+    "start_time_utc": "2025-07-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f32f5efffc78a21b22649b113fdba831",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "VSinger UTAMATSURI LIVE in Toyosu PIT",
+    "start_time_utc": "2025-08-22T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "a8973027d7a6ccfb7ed1190f522b5e1c",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "VSinger UTAMATSURI LIVE in Toyosu PIT",
+    "start_time_utc": "2025-08-22T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "851afd2d801efef4dc357b6710a702d4",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "Vsinger UTAMASTURI LIVE in Toyosu PIT",
+    "start_time_utc": "2025-08-22T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "163a4ff5a6f6f8e830c3cb40198e5594",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "心世紀RADIO ♯3",
+    "start_time_utc": "2025-07-14T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "1953806fea03da02612b0b43a0370d37",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "ココロこみゅにてぃ vol.3",
+    "start_time_utc": "2025-07-14T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "43149ac6e2fd4c3d47769ea6e29bd772",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "拉面模拟器直播",
+    "start_time_utc": "2025-07-16T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "3028a69ba55ee8fd9f7428f21f35628f",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "第3回 ココロこみゅにてぃ 配信",
+    "start_time_utc": "2025-07-14T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "942a0d084ecae72166a77292ed13652c",
+    "members": [
+      "Sooda_oda"
+    ],
+    "title": "空爽周边订购截止",
+    "start_time_utc": "2026-07-13T04:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "7e5d9ad23a5e21a4a8a4702c4714b4f2",
+    "members": [
+      "CIEL_VanillaSky",
+      "Sooda_oda"
+    ],
+    "title": "空爽Palette同步视听会",
+    "start_time_utc": "2026-07-12T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "02c6dc919f6bba3192c18604723feff9",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "杂谈/歌回直播",
+    "start_time_utc": "2025-07-17T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "6c3a122baa94b6af72f6a40a3bf92282",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "メンシプ配信『めっちゃカメレオン』",
+    "start_time_utc": "2025-07-15T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "edef21ce613559696be0ff9eb27140bb",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "直播介绍周边",
+    "start_time_utc": "2026-07-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "1315bdad594021a6562bdf0c398b0cd2",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "硝子宫生放送 【节奏天国 奇迹之星】",
+    "start_time_utc": "2026-07-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "af1911ec22edc8684cbf09ceb7ff1815",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "硝子宮生放送 【节奏天国 奇迹之星】",
+    "start_time_utc": "2025-07-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "6b8586af1600e8ed6b30d03eb856879a",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "ゆうなぎるど 杂谈直播",
+    "start_time_utc": "2025-07-14T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "43149ac6e2fd4c3d47769ea6e29bd772",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "【拉面模拟器】直播",
+    "start_time_utc": "2025-07-16T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "cf504b626ac517b89f4a84cb591bf0fd",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "ココロこみゅにてぃ直播",
+    "start_time_utc": "2025-07-06T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "cf58c8286d56fa99b7f1b4e9320bbf55",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "配信",
+    "start_time_utc": "2025-07-14T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "674f3094ce4313db4d70d4e471c528c8",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "ゆうなぎるど 直播",
+    "start_time_utc": "2026-07-14T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d2d1af1ac065ab5cc97df2e7d8c7ca30",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "一起听Never Wanted Love",
+    "start_time_utc": "2026-07-15T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f722bfa9e18e3de0d96e6a20fa6d3e2f",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "ひめみこ直播：违う冬のぼくら",
+    "start_time_utc": "2026-07-16T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f07065d32483b622912af6a30b438ccd",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "理芽ジャッジ Chapter 9",
+    "start_time_utc": "2026-07-16T12:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "5893e78b755f212373e00b45ffb49890",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "春猿火との邂逅 コラボ配信",
+    "start_time_utc": "2026-07-16T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "4657c6eaf8f26c186175af27f710302b",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "#ひめみこ生放送（姬巫女生放送）",
+    "start_time_utc": "2026-07-16T14:32:36Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "673dd0d9b47f27f8415c6cddf861b85f",
+    "members": [
+      "CIEL_VanillaSky"
+    ],
+    "title": "CIEL稀有信息与纸袋故事Space",
+    "start_time_utc": "2026-07-16T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "ba68988b8a749bfba4ec355d1019e1b0",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "配信",
+    "start_time_utc": "2026-07-17T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "1bb6db0320c71f12823d8a89c14004c1",
+    "members": [
+      "kurogaki0311",
+      "ASU_virtual"
+    ],
+    "title": "新曲「旅に帰る」プレミア公開",
+    "start_time_utc": "2026-07-17T09:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "155c7c544eacf5876429fd02db36ed7e",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "歌ってみた投稿",
+    "start_time_utc": "2026-07-17T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d2a43ef61508fe80e0511bd124b88c1b",
+    "members": [
+      "yunagi_gr",
+      "ASU_virtual"
+    ],
+    "title": "夕凪機生放送 夏曲歌枠",
+    "start_time_utc": "2026-07-17T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "3aa7ba4be07c99ca9a77c181debb79b4",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "X Spaces",
+    "start_time_utc": "2026-07-17T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "656f7cecc5a7ebbfc4cbc70e9a96294c",
+    "members": [
+      "Meeimme"
+    ],
+    "title": "广州神椿only",
+    "start_time_utc": "2026-07-18T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "d30b83a083a7dc501110448404c1ce8e",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "New cover song",
+    "start_time_utc": "2026-07-18T10:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "01e08e324c9ae8ee3dc437c6527666e9",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "New cover song",
+    "start_time_utc": "2026-07-18T10:30:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "a5ac7ca4726220dc6ee645b76c442f5e",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "直播",
+    "start_time_utc": "2026-07-18T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "0315f0ce40eb656d6588f67930ebc81d",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "【Keep Talking and Nobody Explodes】合作直播",
+    "start_time_utc": "2026-07-18T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "69b28b8ae302db23e66e531048e17659",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "下次直播",
+    "start_time_utc": "2026-07-19T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "53da0c65f2405ebc2c5a3bb0e07f85d2",
+    "members": [
+      "BEMA_virtual",
+      "yunagi_gr"
+    ],
+    "title": "【夏企画】最高の夏休みの1日を計画しようず🍉【神椿】",
+    "start_time_utc": "2026-07-19T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "a54fb348d0a170c9d221365e30c4b0b4",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "合作翻唱投稿 & 聊天",
+    "start_time_utc": "2026-07-19T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "704a5427a59de8db5a3bc1ea25eb4274",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "夏休みの1日（暑假的一天）",
+    "start_time_utc": "2026-07-20T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "285764a7d18b290e77a4a0fb27fb2794",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "早间活动直播",
+    "start_time_utc": "2026-07-21T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "033145b3b82c4a5dfce0155716e6696a",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "晨间杂谈",
+    "start_time_utc": "2026-07-20T21:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "ad176bf071d1f46e74510dfd05cfbd00",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "服务器维护",
+    "start_time_utc": "2026-07-20T18:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "a868f6b35dd5e263d274e8b8d694a037",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "御莉姫生放送",
+    "start_time_utc": "2026-07-21T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "52b5a2007a470c5c10649c04833f69fa",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "Space（中期汇报）",
+    "start_time_utc": "2026-07-21T12:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "935d4e0f8810832c63766167edcb08bf",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "配信release",
+    "start_time_utc": "2026-07-21T15:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "259f418cfccda446be19b9e10ae3c93c",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "ヰ世界情绪「深海之焰」MV首映公开",
+    "start_time_utc": "2026-07-22T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "ac1fdc0ea063f02923e0d6e4e85f1c6f",
+    "members": [
+      "RIM_virtual",
+      "GuiAnoDayo"
+    ],
+    "title": "ぐいりめの！GaL GaL Night Lovers. . . vol.21 直播",
+    "start_time_utc": "2026-07-22T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "c77e88e67d36fad9633f20c87b8a3ee0",
+    "members": [
+      "yunagi_gr",
+      "virtual_kaf"
+    ],
+    "title": "夕凪機生放送（嘉宾：花谱）",
+    "start_time_utc": "2026-07-22T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "cc6b8c338056ee75f234822f9ea4bbf6",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "ギャルギャル（GalGal）直播",
+    "start_time_utc": "2026-07-22T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "32f90f938c80d4b55a4157ca0c7f0327",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "夕凪機生放送",
+    "start_time_utc": "2026-07-22T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "7291bd6df36603a1eeabf3568b8e8e9a",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "ぐいりめの！GaL GaL Night Lovers. . . vol.21",
+    "start_time_utc": "2026-07-22T12:32:52Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "718b00e5c77b74421dd9516701cf3942",
+    "members": [
+      "hinageshi_gr",
+      "garasumiya_gr"
+    ],
+    "title": "氷夏至生放送",
+    "start_time_utc": "2026-07-23T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "2fba57fe95771570af06f0a044195550",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "MS限定配信",
+    "start_time_utc": "2026-07-23T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "c7efc961b3a3972901eaa763841d699b",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "少女革命計画 2nd LIVE『Revolutio』",
+    "start_time_utc": "2026-07-23T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "73e9459425f692483f90197a02e3b783",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "『みかんれでぃお #1 自己紹介編』首播",
+    "start_time_utc": "2026-07-24T09:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "fe45008f25569cae0ccb83b556dd4578",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "Space（关于翻唱的聊天）",
+    "start_time_utc": "2026-07-24T10:10:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e88c6a327ba50fc6417c4b777f6028c1",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "生放送（直播）",
+    "start_time_utc": "2026-07-24T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e152f956b97dee8c2b7b2d4d12172fea",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "硝子宮生放送 【节奏天国 奇迹之星】",
+    "start_time_utc": "2026-07-24T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "79ded9609ead6a4f662e33ad8771030e",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "メン限配信（面限直播）",
+    "start_time_utc": "2026-07-24T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "14d595d3e6127eaf0c08b1135271bf60",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "本日配信",
+    "start_time_utc": "2026-07-24T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "74dde4db17b6470b4699f770d907fb4f",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "直播（恐怖游戏）",
+    "start_time_utc": "2026-07-24T16:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "254f3e833438ee7ec5aa24c5ecadcba1",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "OffKai Expo",
+    "start_time_utc": "2026-07-25T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "fdea603dad3fd342cb5046e0b7d2a902",
+    "members": [
+      "CIEL_VanillaSky",
+      "hinageshi_gr"
+    ],
+    "title": "CIEL草莓Live3演唱会",
+    "start_time_utc": "2026-07-25T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "9a8b1489ee059841dd0b10ba5d0fbd23",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "祭典（具体活动未明确）",
+    "start_time_utc": "2026-07-26T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "e6828d6dc4a4c8cbd57f5ec2e7cf4a7a",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "下次直播",
+    "start_time_utc": "2026-07-26T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "e3a5b048381823643ee9f767d73f9ca1",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機生放送",
+    "start_time_utc": "2026-07-26T02:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "36485baf712aaf397aa06afd1b9bac90",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "OffKai LIVE: Dazzling Showtime",
+    "start_time_utc": "2026-07-26T02:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "702b0f099f938fb0842485ad6bd36fbc",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "佳镜院吃拉面直播",
+    "start_time_utc": "2026-07-26T04:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "958a501b76a69622ce59d1e60b96e647",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "登録者20万人突破企画！-20個答える-【神椿】",
+    "start_time_utc": "2026-07-26T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f3e03edcbc8c352d9e42351cefc9f1cb",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "《哈利·波特与凤凰社》同时观看",
+    "start_time_utc": "2026-07-26T12:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "6d3564ec3dc6d7eb1e7d70fe39aac671",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "ヰ世界電子通信部 生配信",
+    "start_time_utc": "2026-07-27T11:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "beef96adeec4882511b0e0b06ff1d4fa",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "セガUFOキャッチャーオンラインで遊ぶ（玩世嘉UFO抓娃娃机在线版）",
+    "start_time_utc": "2026-07-28T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "365422f0d06b16a947d956fd38fe870c",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "夕凪機 × セガオンラインクレーンゲーム プレイ配信",
+    "start_time_utc": "2026-07-28T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "5eb9a4fbbcf6b71195e9737ffabae119",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機 × セガUFOキャッチャーオンライン プレイ配信",
+    "start_time_utc": "2026-07-28T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "16ba33c03e38c10f1bf56f50b252d3f6",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "配信（冷製カップヌードル）",
+    "start_time_utc": "2026-07-28T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "9fb7153a979f2ac0fb30c40286444d7e",
+    "members": [
+      "CIEL_VanillaSky"
+    ],
+    "title": "告别",
+    "start_time_utc": "2026-07-28T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "b46e14dd9e717c9fcae7fe7d3adc4d4b",
+    "members": [
+      "kakyoin_gr",
+      "BEMA_virtual"
+    ],
+    "title": "会员限定首次直播",
+    "start_time_utc": "2026-07-29T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "8f0b2ba73623f276309fdfec5323efc1",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "冷しカップヌードルを食べながら歌みたに備える配信【神椿】",
+    "start_time_utc": "2026-07-29T09:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "ec3a26ad60900704cdb495c8040a8b40",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "New cover song.",
+    "start_time_utc": "2026-07-29T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "35c9f94ee383210e89f22c166119ed0c",
+    "members": [
+      "BEMA_virtual",
+      "ASU_virtual"
+    ],
+    "title": "New cover song.",
+    "start_time_utc": "2026-07-29T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "88276225ae933cfed6f46d1ea9318fc6",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "つみばらじお #11",
+    "start_time_utc": "2026-07-29T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "75153420c40d9f2b8859715a7ed85ce7",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "つみばらじお #11",
+    "start_time_utc": "2026-07-29T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "0d6ad27c5476c5d38f93a61617df0038",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "关于心情和れぼるしお的Space",
+    "start_time_utc": "2026-07-29T14:30:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "333790bab01714094c3e51c7ef084056",
+    "members": [
+      "hinageshi_gr",
+      "RIM_virtual"
+    ],
+    "title": "氷夏至生放送",
+    "start_time_utc": "2026-07-30T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "81cf343e1c2282683415600e832bbe7c",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "氷夏至生放送",
+    "start_time_utc": "2026-07-30T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "6979acc18591c9c25a5368f5f96313fa",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "【幸祜は1人ポッチ】电台发布",
+    "start_time_utc": "2026-07-31T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "135ee627a0c18414a96b7ea1954e75bd",
+    "members": [
+      "RIM_virtual",
+      "virtual_kaf"
+    ],
+    "title": "花譜メンバーシップ生配信「#未確認少女観測部 vol.50」",
+    "start_time_utc": "2026-07-31T07:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "a7f428d9698b90c6e55f586b6add0347",
+    "members": [
+      "kamitsubaki_jp"
+    ],
+    "title": "Strings in Owl ||:echo:|| 追加公演",
+    "start_time_utc": "2026-07-31T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e76483e4e13f81343d883b80bb920b87",
+    "members": [
+      "kurogaki0311"
+    ],
+    "title": "amazarashi「つじつま合わせに生まれた僕等」公開",
+    "start_time_utc": "2026-07-31T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "e4ed7dd85df64321bda0262f401251a6",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "『#ヰ世界電子通信部』LONGLEGS 同時視聴配信",
+    "start_time_utc": "2026-07-31T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "6da62019c3313badf594d0ec421e44c2",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "FC限定直播",
+    "start_time_utc": "2026-07-31T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "9bd1df26a642c7fe843c8be5d7bbbff1",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "女子会配信 with CHINOさん&VITTEさん",
+    "start_time_utc": "2026-07-31T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "5690638c8da8f3034ce644c324ecd87d",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "幸祜は1人ポッチ",
+    "start_time_utc": "2026-07-31T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "b2f9e97ec4e1047024b3ef900f613670",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "配信（21:30〜）",
+    "start_time_utc": "2026-07-31T12:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "04c959d288c07c494c8af8bfe8de0e4e",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "【Dead Sushi】同时观看会",
+    "start_time_utc": "2026-07-31T12:15:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "7807e59d0cf6af9c6cb07bba62cf9714",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "8月配信（VRChat世界巡游）",
+    "start_time_utc": "2026-08-01T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "9d3fbfdb8f2d5f1a26346fdf1d7624a7",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "note更新",
+    "start_time_utc": "2026-08-01T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "2d264f1a69593baf1bdf073facb941c7",
+    "members": [
+      "orihime_gr",
+      "BEMA_virtual"
+    ],
+    "title": "御莉姫生放送（下月直播）",
+    "start_time_utc": "2026-08-01T00:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "2233c7a440b91912c484c0aba67c7173",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "KOKO主催 あのお祭り（夏編）",
+    "start_time_utc": "2026-07-31T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "8227a45b30886f9698870380a8e7878b",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "七海うらら生誕祭2026（19:00 カバー動画プレミア公開 / 22:00 生誕祭YouTube生配信）",
+    "start_time_utc": "2026-08-01T10:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "af9ef97adba1b3d54ed6a5c4d566a24d",
+    "members": [
+      "kakyoin_gr",
+      "garasumiya_gr",
+      "yunagi_gr"
+    ],
+    "title": "心世紀・罪十罰 ライブ映像プレミア公開",
+    "start_time_utc": "2026-08-01T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "f3b4ba60997eef8360d7519db24c28a0",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "「改変」ミリオン・コンプレクシティ与SURVIVAL影像首播公开",
+    "start_time_utc": "2026-08-01T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "4bbdc43bdf809f0d18d52d2840ca321d",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "心世紀・罪十罰 LIVE影像Premiere公开",
+    "start_time_utc": "2026-08-01T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "90298e8c716075dacf079e2c5538a9ba",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "【杂谈】被留在7月的女人【神椿】",
+    "start_time_utc": "2026-08-01T11:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "2cc5e145800aec424f07cdf485801eae",
+    "members": [
+      "kakyoin_gr",
+      "garasumiya_gr",
+      "yunagi_gr",
+      "orihime_gr",
+      "hinageshi_gr"
+    ],
+    "title": "少女革命計画 メンバー全員集合スペース",
+    "start_time_utc": "2026-08-01T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "bd82893dfb743fdfa7508313f3ac068e",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "少女革命計画 メンバー全員集合スペース",
+    "start_time_utc": "2026-08-01T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "66605ed91bb1b2423767a3713e1437de",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "少女革命計画 メンバー全員集合スペース",
+    "start_time_utc": "2026-08-01T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "63669d138acf88d311af09222b074584",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "少女革命計画 メンバー全員集合スペース",
+    "start_time_utc": "2026-08-01T14:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d45a599bc7642f71d9136c80dc7c6895",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "通知",
+    "start_time_utc": "2026-08-01T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "b569781429f5de8fbb4c74c7dbcf074e",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "マリオカート8DX初見プレイ配信",
+    "start_time_utc": "2026-08-02T12:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "979bd35347ae3a0263a5561bedf82d06",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "スプラ配信",
+    "start_time_utc": "2026-08-01T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "08589ba9a0adc5dd2258473bfbba9178",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "#Unmute vol.1 Powered by ボカコレ",
+    "start_time_utc": "2026-08-02T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "f0132874a3a2aa1ba4243e87d9a3b687",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "8/3-8/9のげしスケ",
+    "start_time_utc": "2026-08-02T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "42b7a221d5f2bc23cc8cdb9cd3aa2565",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "惊喜直播",
+    "start_time_utc": "2026-08-03T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "962155e21174c54c01aebc794fcfaf73",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "【ヰ世界電子通信部】生配信",
+    "start_time_utc": "2026-08-03T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "24caceb6c2697535d9bf672c858c0775",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "#氷夏至生放送",
+    "start_time_utc": "2026-08-03T12:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "850f00f160a528bae37db2f1e518c0cd",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "少女革命計画 2nd LIVE「Revolutio」応援広告掲出",
+    "start_time_utc": "2026-08-02T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "e305b7c124fb6497a4498d6ea2496b46",
+    "members": [
+      "Sooda_oda"
+    ],
+    "title": "KUUSOU VIRTUAL MINI LIVE 「空爽パレット」",
+    "start_time_utc": "2026-08-03T14:59:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "e0c721a46a2feaf9083f5ee4b84b5242",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "このあと20時",
+    "start_time_utc": "2026-08-04T11:00:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "981c3eef8ed7149136b966863dc6d00e",
+    "members": [
+      "huyuyasumi_",
+      "kakyoin_gr"
+    ],
+    "title": "笹川真生「脉拍」Vol.6",
+    "start_time_utc": "2026-08-04T15:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "f1afbf5df8d3bdd79bec18ff0c77c39d",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "ココロこみゅにてぃ vol.4",
+    "start_time_utc": "2026-08-05T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "cf3f66e0aca129e1ad5040f3a754806c",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "ココロこみゅにてぃ vol.4",
+    "start_time_utc": "2026-08-05T10:30:00Z",
+    "is_precise": true,
+    "notified": true
+  },
+  {
+    "event_id": "d57e1a2fbcd52266057c6ef4e659ba69",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "理芽ジャッジ タイム",
+    "start_time_utc": "2026-08-05T11:00:00Z",
+    "is_precise": false,
+    "notified": true
+  },
+  {
+    "event_id": "b4e699192ce2ac075774215628a0f419",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "#夕凪機生放送",
+    "start_time_utc": "2026-08-05T11:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": ""
+  },
+  {
+    "event_id": "a4dd5cef3fbdf4ee6add227cb3364aae",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "明日の配信",
+    "start_time_utc": "2026-08-05T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": ""
+  },
+  {
+    "event_id": "31305323d5b839af4fc2f0019107e749",
+    "members": [
+      "ASU_virtual"
+    ],
+    "title": "【怪谈】明透和观众投稿的真实恐怖怪谈",
+    "start_time_utc": "2026-08-06T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HOjkRpPbcAAD8yV.jpg?name=orig",
+    "source_tweet_id": "2085306261604872462"
+  },
+  {
+    "event_id": "dec59720ff7e953fa55dada065165c6a",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "美古途の配信",
+    "start_time_utc": "2026-08-06T11:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2085317225804935453"
+  },
+  {
+    "event_id": "2460863c95fa3695a446271512431417",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "X Space（18:30〜）",
+    "start_time_utc": "2026-08-07T09:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2085520574793896318"
+  },
+  {
+    "event_id": "b218c6ee17c3a2ebfb82fe2f69332edf",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "ずっと真夜中でいいのに。歌曲限定歌枠",
+    "start_time_utc": "2026-08-07T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HO8kEk4bsAAKN0O.jpg?name=orig",
+    "source_tweet_id": "2085688599375200648"
+  },
+  {
+    "event_id": "7992bdc4c05e05c87852093069874262",
+    "members": [
+      "BEMA_virtual",
+      "hinageshi_gr",
+      "kakyoin_gr"
+    ],
+    "title": "朝雑（8月7日）",
+    "start_time_utc": "2026-08-06T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPCNUU8agAAjAy8.jpg?name=orig",
+    "source_tweet_id": "2085317225804935453"
+  },
+  {
+    "event_id": "cc9b5135302e542c30a218fb56d5298d",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "新衣装「Aries」Live2Dお披露目&告知",
+    "start_time_utc": "2026-08-08T12:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2086065818086121907"
+  },
+  {
+    "event_id": "a730fd8cd5b384d0675cd3dabf4bf11d",
+    "members": [
+      "garasumiya_gr",
+      "kakyoin_gr",
+      "hinageshi_gr",
+      "yunagi_gr",
+      "orihime_gr"
+    ],
+    "title": "KAMITSUBAKI WARS 2026 神椿澀谷戰線 少女革命計画 2nd LIVE 『Revolutio』",
+    "start_time_utc": "2026-08-07T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPG4hiwakAA8YOT.jpg?name=orig",
+    "source_tweet_id": "2078057119023337805"
+  },
+  {
+    "event_id": "23cd750c0f8e251ffba5d7264622fa4d",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "直播",
+    "start_time_utc": "2026-08-09T02:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2085654947924971798"
+  },
+  {
+    "event_id": "43a834a5415c8c74ae967902dd87df5f",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機生放送《Beast of Reincarnation》续篇",
+    "start_time_utc": "2026-08-09T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2086305298613162346"
+  },
+  {
+    "event_id": "dab1b76ec44617b5b64e1b44d54e9d42",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "#神椿報奏部 vol.63",
+    "start_time_utc": "2026-08-10T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HO3AxHeagAAnQsu.jpg?name=orig",
+    "source_tweet_id": "2084565011544805882"
+  },
+  {
+    "event_id": "89f2e6ea9f14871661c0a54f219dbb88",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "神椿報奏部 vol.63",
+    "start_time_utc": "2026-08-10T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HO3AxHeagAAnQsu.jpg?name=orig",
+    "source_tweet_id": "2084565011544805882"
+  },
+  {
+    "event_id": "d4c073825ce9bcf7d94c35eeda7ccc54",
+    "members": [
+      "yunagi_gr",
+      "KOKO__virtual"
+    ],
+    "title": "夕凪機生放送：瑪利歐賽車8DX",
+    "start_time_utc": "2026-08-10T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPRnKyAaEAE0FyV.jpg?name=orig",
+    "source_tweet_id": "2086405966699069501"
+  },
+  {
+    "event_id": "f19af490fd499d104b0a7fea08a9d380",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "夕凪機視点の配信（KOKO芸夢祭）",
+    "start_time_utc": "2026-08-10T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2086784017802895749"
+  },
+  {
+    "event_id": "26209b3af4e5ca29ec81ffba2a88f9b3",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "首次深夜会员限定直播",
+    "start_time_utc": "2026-08-10T14:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPXMGIma0AA7krb.jpg?name=orig",
+    "source_tweet_id": "2086798412113133830"
+  },
+  {
+    "event_id": "8648155a813b26dbb0a02cb0c11c5013",
+    "members": [
+      "yunagi_gr",
+      "KOKO__virtual"
+    ],
+    "title": "与幸祜前辈的直播",
+    "start_time_utc": "2026-08-09T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2086305298613162346"
+  },
+  {
+    "event_id": "ee58ef6b541323c85b0b7d5ea6c2a127",
+    "members": [
+      "huyuyasumi_"
+    ],
+    "title": "东京公演",
+    "start_time_utc": "2026-08-09T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPAQq1XbYAEP3bK.jpg?name=orig",
+    "source_tweet_id": "2085595237490278461"
+  },
+  {
+    "event_id": "b9b1cf61bf119530afaf05d4d9d2e74b",
+    "members": [
+      "hinageshi_gr",
+      "orihime_gr",
+      "kakyoin_gr",
+      "yunagi_gr",
+      "garasumiya_gr"
+    ],
+    "title": "【全員集合】少女革命計画 2nd LIVE 『Revoltio』感想戦",
+    "start_time_utc": "2026-08-11T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPRLOMHa4AADYno.jpg?name=orig",
+    "source_tweet_id": "2086384847090798634"
+  },
+  {
+    "event_id": "b904b1353c1848c9e042e4e7860bbecb",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "少女革命計画 2nd LIVE『Revolutio』感想战配信",
+    "start_time_utc": "2026-08-11T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2087114962833744183"
+  },
+  {
+    "event_id": "b5b9cea21f5e802dfbe800f3fa7cc5e7",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "少女革命計画 2nd LIVE『Revolutio』感想战配信",
+    "start_time_utc": "2026-08-11T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2087115288349409530"
+  },
+  {
+    "event_id": "2c69868de118367e600950591e6abbe1",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "V_UTAMATSURI_LIVE 乐曲介绍&连线等待活动",
+    "start_time_utc": "2026-08-11T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPaMM8BaAAAb7G5.jpg?name=orig",
+    "source_tweet_id": "2087011123727921324"
+  },
+  {
+    "event_id": "d52c6b54675f69cffe82df0439dd8a5f",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "【全员集合】少女革命計画 2nd LIVE《Revolutio》感想战",
+    "start_time_utc": "2026-08-11T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPRLOMHa4AADYno.jpg?name=orig",
+    "source_tweet_id": "2086384847090798634"
+  },
+  {
+    "event_id": "e5fd572ffff4ad5dd741db9eb70b42a1",
+    "members": [
+      "yunagi_gr",
+      "orihime_gr"
+    ],
+    "title": "《瑠璃ノ誓》MV观看&Revolutio感想直播",
+    "start_time_utc": "2026-08-12T08:55:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPRLOMHa4AADYno.jpg?name=orig",
+    "source_tweet_id": "2087145789235847508"
+  },
+  {
+    "event_id": "184755600fac770c26d594e8a953f12e",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機生放送",
+    "start_time_utc": "2026-08-12T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPcsBqbaUAA7220.jpg?name=orig",
+    "source_tweet_id": "2087185363630801172"
+  },
+  {
+    "event_id": "f5f07f1a01ec5fcbad90f7b5d6b9bce3",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "MS限定杂谈直播",
+    "start_time_utc": "2026-08-12T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPhFH5Va8AEV13b.jpg?name=orig",
+    "source_tweet_id": "2087494434497974279"
+  },
+  {
+    "event_id": "92afc282130054f14314b8c9c377895a",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機生放送『Beast of Reincarnation』3回目",
+    "start_time_utc": "2026-08-12T11:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPcsBqbaUAA7220.jpg?name=orig",
+    "source_tweet_id": "2087498122184499654"
+  },
+  {
+    "event_id": "fb8bd1c482298b782940bee9744afb26",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "#かきょすぺーす",
+    "start_time_utc": "2026-08-11T15:30:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2087193825802703163"
+  },
+  {
+    "event_id": "31d0b544559801958d80c4982e5cf67c",
+    "members": [
+      "KOKO__virtual",
+      "RIM_virtual",
+      "yunagi_gr",
+      "hinageshi_gr",
+      "kakyoin_gr",
+      "garasumiya_gr"
+    ],
+    "title": "KOKO芸夢祭「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPNGPEWagAAQojB.jpg?name=orig",
+    "source_tweet_id": "2086088283470340433"
+  },
+  {
+    "event_id": "263b36cfd9f4f89fa8a200cad41aba24",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "KOKO芸夢祭(夏)「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPcsyrlbsAApZQp.jpg?name=orig",
+    "source_tweet_id": "2087854944372355319"
+  },
+  {
+    "event_id": "bf83a0c4d4c654905f8b370a631e0776",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "KOKO芸夢祭(夏)「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPh0GYhboAAd5f8.jpg?name=orig",
+    "source_tweet_id": "2087854405530087670"
+  },
+  {
+    "event_id": "50000034c6139d245c734ddc003861cf",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "KOKO芸夢祭(夏)「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPNGPEWagAAQojB.jpg?name=orig",
+    "source_tweet_id": "2087856582411669786"
+  },
+  {
+    "event_id": "3aeb53bf509ce7729503bfa551b83177",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "KOKO芸夢祭(夏)「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPa29h2a0AA2m7V.jpg?name=orig",
+    "source_tweet_id": "2087855038198927524"
+  },
+  {
+    "event_id": "770f5bd8afa211d57daae34171815361",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "KOKO芸夢祭(夏)「マリオカート8DX」",
+    "start_time_utc": "2026-08-13T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPW0pAVbMAAclkK.jpg?name=orig",
+    "source_tweet_id": "2087853951660261715"
+  },
+  {
+    "event_id": "710480c71d842957c2c3013aea3810c9",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "夜雑談",
+    "start_time_utc": "2026-08-12T16:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2087562630831694128"
+  },
+  {
+    "event_id": "a74c051685a93f6ed998dd103850231c",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "合作翻唱公开首播",
+    "start_time_utc": "2026-08-14T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPgqsVRaIAAxhwR.jpg?name=orig",
+    "source_tweet_id": "2087465374677868948"
+  },
+  {
+    "event_id": "d17c0ab01481b5cbf3e5b46d47b1c6b6",
+    "members": [
+      "GuiAnoDayo"
+    ],
+    "title": "Guiano FC限定",
+    "start_time_utc": "2026-08-14T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2086384492311162936"
+  },
+  {
+    "event_id": "4c3156f0be74c9ee40e064887c961550",
+    "members": [
+      "kakyoin_gr"
+    ],
+    "title": "会员限定直播（在线线香花火）",
+    "start_time_utc": "2026-08-14T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPfXdXwboAAGdR8.jpg?name=orig",
+    "source_tweet_id": "2088219932920320490"
+  },
+  {
+    "event_id": "09496d1689cb62773cba4f913a40a185",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "理芽 歌枠（#理芽歌うってよ）",
+    "start_time_utc": "2026-08-15T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPwaQSjbQAAQLnr.jpg?name=orig",
+    "source_tweet_id": "2088573199072288892"
+  },
+  {
+    "event_id": "95f88ee7e3426d9091be7b7e46c2386f",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "Anime Festival Asia Indonesia 2026 出演",
+    "start_time_utc": "2026-08-15T00:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPwWBNNbIAAVe-E.jpg?name=orig",
+    "source_tweet_id": "2088569154907611246"
+  },
+  {
+    "event_id": "7205c4acaf8551e14c3e7f54b01b56d9",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "スペース",
+    "start_time_utc": "2026-08-15T13:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2088610087665594625"
+  },
+  {
+    "event_id": "8f0fb715a59435330af600865c41a375",
+    "members": [
+      "harusarufi",
+      "harusaruhi"
+    ],
+    "title": "春猿火 新3D脸部模型披露直播（VRChat）",
+    "start_time_utc": "2026-08-16T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPbgEdjbYAAmXvs.jpg?name=orig",
+    "source_tweet_id": "2087101849598132279"
+  },
+  {
+    "event_id": "5be322bb063eac4f2a2d7d738bec71ec",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "#夕凪機生放送",
+    "start_time_utc": "2026-08-16T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPxMytYaYAAqCs-.jpg?name=orig",
+    "source_tweet_id": "2088628803853750773"
+  },
+  {
+    "event_id": "913ecbfb0568ff0057f049ac98e6ab13",
+    "members": [
+      "harusaruhi"
+    ],
+    "title": "春猿火 新3Dフェイスお披露目配信（VRChat）",
+    "start_time_utc": "2026-08-16T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPbgEdjbYAAmXvs.jpg?name=orig",
+    "source_tweet_id": "2087101849598132279"
+  },
+  {
+    "event_id": "b39b5bb1daf877aa2d948faa2a3d3a65",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "氷夏至生放送（Coffee Talk Tokyo）",
+    "start_time_utc": "2026-08-17T11:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HP2lWD9aAAAONzX.jpg?name=orig",
+    "source_tweet_id": "2089007670531686860"
+  },
+  {
+    "event_id": "fea78ea2d2ff65dd43e696726b4cb878",
+    "members": [
+      "hinageshi_gr"
+    ],
+    "title": "Coffee Talk Tokyo 直播",
+    "start_time_utc": "2026-08-17T11:35:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2089314259205554592"
+  },
+  {
+    "event_id": "364dd5747e47970199205366b26f08ea",
+    "members": [
+      "CIEL_VanillaSky"
+    ],
+    "title": "土の中からお歌をお届け",
+    "start_time_utc": "2026-08-16T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "",
+    "source_tweet_id": "2089175427680219289"
+  },
+  {
+    "event_id": "a9047302d7e282cfc9d4e33f5d5689f1",
+    "members": [
+      "KOKO__virtual"
+    ],
+    "title": "幸祜激情英语时间（合作直播）",
+    "start_time_utc": "2026-08-18T12:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HP--PaTbYAAlQBH.jpg?name=orig",
+    "source_tweet_id": "2089597929799733349"
+  },
+  {
+    "event_id": "cdb3a780b33f2cd93e3a14a637596816",
+    "members": [
+      "isekaijoucho"
+    ],
+    "title": "《ヰ世界らじおプラネット》「いせぷら夏の自由研究！」",
+    "start_time_utc": "2026-08-18T16:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPe8m6ibYAAXLJW.jpg?name=orig",
+    "source_tweet_id": "2087373507558875434"
+  },
+  {
+    "event_id": "5fc7fd9074c238b26d96ff1f3e0f42ea",
+    "members": [
+      "RIM_virtual"
+    ],
+    "title": "『#ハウメニ』新曲のこといっちょ語りませんか？の会",
+    "start_time_utc": "2026-08-19T10:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQE0Jc2aAAE-cSZ.jpg?name=orig",
+    "source_tweet_id": "2090009044086145066"
+  },
+  {
+    "event_id": "c7889751f9729e9ebd5391b1c7ff82c2",
+    "members": [
+      "yunagi_gr"
+    ],
+    "title": "夕凪機生放送（和CONA酱合作的棉花糖杂谈）",
+    "start_time_utc": "2026-08-19T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQA-zCnakAEbTyD.jpg?name=orig",
+    "source_tweet_id": "2089739278427504885"
+  },
+  {
+    "event_id": "d6cb05d9650c3fc782c0c6b606d8aa6c",
+    "members": [
+      "RIM_virtual",
+      "yunagi_gr"
+    ],
+    "title": "8/19 理芽公式YouTube配信",
+    "start_time_utc": "2026-08-18T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HOyKEz4aUAAog1K.jpg?name=orig",
+    "source_tweet_id": "2084195494319034451"
+  },
+  {
+    "event_id": "d043381dd38d7a1cd7905d381bbfc1d8",
+    "members": [
+      "kakyoin_gr",
+      "BEMA_virtual"
+    ],
+    "title": "神椿おしゃべりアンバサダー vol.10",
+    "start_time_utc": "2026-08-20T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HP5dnjRbwAAcUCF.jpg?name=orig",
+    "source_tweet_id": "2089210220660891998"
+  },
+  {
+    "event_id": "fbe1f677ed4fefd9ba4da0ff7c45c1a0",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "神椿おしゃべりアンバサダー vol.10",
+    "start_time_utc": "2026-08-20T12:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HP5dnjRbwAAcUCF.jpg?name=orig",
+    "source_tweet_id": "2090406073798922537"
+  },
+  {
+    "event_id": "37d8a8ffa44a929a4d0eb76909536443",
+    "members": [
+      "huyuyasumi_"
+    ],
+    "title": "大阪live",
+    "start_time_utc": "2026-08-19T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPCZoSoaoAE085P.jpg?name=orig",
+    "source_tweet_id": "2085335549154578700"
+  },
+  {
+    "event_id": "aef2a3bd4dfbd92042fd73b544e3ee9e",
+    "members": [
+      "isekaijoucho",
+      "BEMA_virtual",
+      "virtual_kaf",
+      "RIM_virtual",
+      "kaf_info",
+      "ASU_virtual"
+    ],
+    "title": "YouTube Music Weekend",
+    "start_time_utc": "2026-08-21T10:10:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPBWbHsa4AA_LKb.jpg?name=orig",
+    "source_tweet_id": "2085261665013240196"
+  },
+  {
+    "event_id": "ff9e54af6c02bcb5a162494c3f5fe6fd",
+    "members": [
+      "garasumiya_gr"
+    ],
+    "title": "#硝子宮生放送 【Cat Chaos】",
+    "start_time_utc": "2026-08-21T11:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQI3h-Ma0AAHn8T.jpg?name=orig",
+    "source_tweet_id": "2090294238357651631"
+  },
+  {
+    "event_id": "12ab403ae83a5d1f958aacd5655bd119",
+    "members": [
+      "yunagi_gr",
+      "CIEL_VanillaSky",
+      "harusaruhi",
+      "Sooda_oda",
+      "RIM_virtual",
+      "KOKO__virtual",
+      "sooda_oda",
+      "garasumiya_gr"
+    ],
+    "title": "VSinger UTAMATSURI LIVE in Toyosu PIT",
+    "start_time_utc": "2026-08-22T00:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HPfTvOma0AAJIz9.jpg?name=orig",
+    "source_tweet_id": "2087388607791448428"
+  },
+  {
+    "event_id": "287fb3bc496c5fc75f48182001818573",
+    "members": [
+      "ASU_virtual",
+      "BEMA_virtual"
+    ],
+    "title": "明透5周年纪念配信",
+    "start_time_utc": "2026-08-22T15:00:00Z",
+    "is_precise": false,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HOtqdVVa8AAA4n_.jpg?name=orig",
+    "source_tweet_id": "2083877976094003696"
+  },
+  {
+    "event_id": "73409ed4dab570f6d3aa12108837cf57",
+    "members": [
+      "orihime_gr"
+    ],
+    "title": "直播",
+    "start_time_utc": "2026-08-24T10:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQZAN13aQAAf8VT.jpg?name=orig",
+    "source_tweet_id": "2091450874212057519"
+  },
+  {
+    "event_id": "0f8c768580def84621664bcbcab90618",
+    "members": [
+      "BEMA_virtual"
+    ],
+    "title": "【メン限|雑談】最近いかがお過ごしでしたか？べまにあー近況報告会の巻。【神椿】",
+    "start_time_utc": "2026-08-24T11:30:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQcMyBXbMAEVqPB.jpg?name=orig",
+    "source_tweet_id": "2091654611379904866"
+  },
+  {
+    "event_id": "46b46c94bb4031642b87f174507f8164",
+    "members": [
+      "virtual_kaf"
+    ],
+    "title": "みかんれでぃお#2 プレミア公開",
+    "start_time_utc": "2026-08-25T09:00:00Z",
+    "is_precise": true,
+    "notified": true,
+    "cover_url": "https://pbs.twimg.com/media/HQe5JKJbcAA5gKb.jpg?name=orig",
+    "source_tweet_id": "2091844125255745993"
+  }
+]

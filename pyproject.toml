@@ -1,0 +1,45 @@
+# This manifest stays with the plugin so the directory is portable.
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nonebot-plugin-xfetch"
+version = "2.0.0"
+description = "X/Twitter feed monitor V2 - FxEmbed API, Gemini translation, live reminders"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "nonebot2>=2.0.0",
+    "nonebot-adapter-onebot>=2.0.0",
+    "nonebot-plugin-apscheduler>=0.4.0",
+    "httpx>=0.24.0",
+    "aiohttp>=3.9.0",
+    "python-dateutil>=2.8.0",
+    "jinja2>=3.0.0",
+    "playwright>=1.40.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff"]
+
+[tool.setuptools]
+packages = [
+    "nonebot_plugin_xfetch",
+    "nonebot_plugin_xfetch.clients",
+    "nonebot_plugin_xfetch.core",
+    "nonebot_plugin_xfetch.models",
+    "nonebot_plugin_xfetch.renderer",
+    "nonebot_plugin_xfetch.services",
+    "nonebot_plugin_xfetch.storage",
+]
+package-dir = {nonebot_plugin_xfetch = "."}
+
+[tool.setuptools.package-data]
+nonebot_plugin_xfetch = [
+    "renderer/templates/*.html",
+    "data/misc/*",
+]
+
+[tool.nonebot]
+plugins = ["nonebot_plugin_xfetch"]

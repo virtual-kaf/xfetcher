@@ -1,0 +1,10 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="live-alert">
+  <div class="live-icon">🔴</div>
+  <div class="live-title">{{ event.title }}</div>
+  <div class="live-members">{{ event.members | join("、") }}</div>
+  <div class="live-time">{{ event.start_time_display }}</div>
+  <div class="live-note">直播即将开始</div>
+</div>
+{% endblock %}
