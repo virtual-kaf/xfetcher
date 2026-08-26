@@ -957,7 +957,7 @@ def _run(spec: dict[str, Any]) -> list[str]:
             draw.text(
                 (padding + 16, y + 8),
                 "翻译自DEEPSEEK",
-                font=font(15),
+                font=font(12),
                 fill=(29, 155, 240),
             )
             y += 30
