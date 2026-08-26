@@ -145,7 +145,7 @@ HISTORY_LIMIT: int = 10
 GLOBAL_MEMBER_LIMIT: int = 30
 IMAGE_PROXY: str = "http://127.0.0.1:58309"
 
-# 2 GB 服务器保护。FxTwitter 会返回整条会话，Playwright 还会解码卡片图片；
+# 2 GB 服务器保护。FxTwitter 会返回整条会话，Pillow worker 会解码卡片图片；
 # 这里限制两个最容易产生峰值的阶段，避免它们挤占同机 WebUI 的内存。
 XFETCH_FETCH_CONCURRENCY: int = _get_config_int(
     "KABUBU_XFETCH_FETCH_CONCURRENCY", 4, minimum=1, maximum=8
