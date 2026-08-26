@@ -1,4 +1,4 @@
-"""Generate the deterministic xfetch Pillow acceptance card for Sooda."""
+"""Generate the deterministic xfetch Pillow acceptance card for ASU."""
 
 from __future__ import annotations
 
@@ -9,39 +9,29 @@ from pathlib import Path
 from nonebot_plugin_xfetch.clients.fxtwitter import fetch_conversation
 from nonebot_plugin_xfetch.renderer import engine as xfetch_renderer
 
-TWEET_ID = "2090751763116863742"
-TARGET_TRANSLATION = """#V_UTAMATSURI_LIVE 终于就是明天了……现在已经既紧张又期待……！
-会场票和线上直播票都仍在销售中！
-无论是在现场还是通过直播，如果能和大家一起度过愉快的时光，我都会非常开心！！
-我会全力以赴！！💪
-准备来到现场的各位，也请别忘了防暑和补充水分，路上注意安全🫧
-期待与大家见面☺️"""
+TWEET_ID = "2091513722498105515"
+TARGET_TRANSLATION = """╭────────────╮
+  🌻 明透 五周年纪念 🌻
+       官方周边
+╰────v───────╯
 
-QUOTE_TRANSLATION = """˗ˏˋ #V_UTAMATSURI_LIVE 艺人介绍 ˎˊ˗
+✧  https://x.gd/rpLQ7
+✧  预约截止：9月7日（周一）13:00
 
-🎤 空爽（@CIEL_VanillaSky @sooda_oda）
-由虚拟歌手 CIEL 与创作歌手 Sooda 组成的新概念虚拟音乐组合。
+出道五年了，
+真的非常感谢大家一直以来的支持……！
 
-🎧 PICK UP SONG
-《透明流星狂想曲》
-https://www.youtube.com/watch?v=cU9dcS-MXL4&list=RDcU9dcS-MXL4&start_radio=1
+这次除了使用五周年 KV 制作的商品外，
+还策划了许多能让大家感受到我一路走来音乐轨迹的周边🎈
+（MV 主题周边!!!!!✨✨）
 
-为大家介绍来自空爽的留言！
-这是空爽的出道曲。副歌部分有朗朗上口的舞蹈，
-希望大家能一起跟随节奏，享受这首歌。
+而且这次竟然还有我的【亲笔签名】✏️！
+我要写啦写啦（数量限定，抱歉啦!!!!!!!!!!）
 
-🔽现场门票
-日本国内：https://eplus.jp/vsingerutamatsuri/
-海外：https://eplus.tickets/vsingerutamatsuri/
-※达到规定数量后将结束销售。
+这些都是只有现在、只有在这里才能买到的商品！
+请一定拿到手看看哦🌟
 
-🔽直播票
-https://zan-live.com/ja/live/detail/10922
-
-🔽活动详情
-https://rkmusic.jp/info/843/
-
-#V_UTAMATSURI_LIVE"""
+#明透5周年"""
 
 
 def _use_acceptance_directories(root: Path) -> None:
@@ -61,8 +51,6 @@ async def render(output_dir: Path) -> list[Path]:
         raise RuntimeError("FxTwitter did not return the acceptance target")
 
     conversation.target.translated_text = TARGET_TRANSLATION
-    if conversation.quote is not None:
-        conversation.quote.translated_text = QUOTE_TRANSLATION
 
     paths = await xfetch_renderer.render_conversation_card(conversation)
     if not paths:
