@@ -783,18 +783,16 @@ def _run(spec: dict[str, Any]) -> list[str]:
         quote: dict[str, Any] | None = None,
         width: int = 736,
         target: bool = False,
-        is_quote: bool = False,
     ):
-        # 区分主推文与嵌套引用卡片的内边距与字体阶梯
-        padding = 16 if is_quote else 24
+        padding = 24
         content_width = width - padding * 2
 
-        body_font = font(18 if is_quote else 21)
-        body_line = 25 if is_quote else 30
-        muted_font = font(16 if is_quote else 18)
-        name_font = font(19 if is_quote else 22)
-        trans_font = font(17 if is_quote else 20)
-        trans_line = 24 if is_quote else 28
+        body_font = font(21)
+        body_line = 30
+        muted_font = font(18)
+        name_font = font(22)
+        trans_font = font(20)
+        trans_line = 28
 
         item_key = str(item.get("id", "target" if target else "tweet"))[:40]
         component_prefix = f"tweet[{item_key}]"
@@ -814,15 +812,15 @@ def _run(spec: dict[str, Any]) -> list[str]:
         media = list(item.get("media", []))
         _, media_height, _ = media_layout(media, content_width)
 
-        avatar_size = 40 if is_quote else 52
+        avatar_size = 52
         header_height = avatar_size
 
-        height = padding + header_height + 14
+        height = padding + header_height + 16
         _measure_component(
             f"{component_prefix}.header", height, avatar_height=avatar_size
         )
         if text_lines:
-            body_height = len(text_lines) * body_line + 10
+            body_height = len(text_lines) * body_line + 12
             _measure_component(
                 f"{component_prefix}.body",
                 body_height,
@@ -832,7 +830,7 @@ def _run(spec: dict[str, Any]) -> list[str]:
             height += body_height
 
         if trans_lines:
-            translation_height = 34 + len(trans_lines) * trans_line + 16
+            translation_height = 28 + len(trans_lines) * trans_line + 20
             _measure_component(
                 f"{component_prefix}.translation",
                 translation_height,
@@ -852,20 +850,19 @@ def _run(spec: dict[str, Any]) -> list[str]:
         quote_card = None
         if quote:
             quote_card, _ = render_tweet_card(
-                quote, width=content_width, target=False, is_quote=True
+                quote, width=content_width, target=False
             )
             _measure_component(
                 f"{component_prefix}.quote", quote_card.height + 16
             )
             height += quote_card.height + 16
 
-        if not is_quote:
-            _measure_component(f"{component_prefix}.stats", 36)
-            height += 36
+        _measure_component(f"{component_prefix}.stats", 36)
+        height += 36
 
         if target and item.get("url"):
-            _measure_component(f"{component_prefix}.link", 40)
-            height += 40
+            _measure_component(f"{component_prefix}.link", 36)
+            height += 36
 
         height += padding
         _measure_component(
@@ -884,14 +881,11 @@ def _run(spec: dict[str, Any]) -> list[str]:
         )
         draw = text_draw(card)
 
-        # 1. 外边框与底色优化：引用卡片降低视觉权重
-        fill_color = (247, 249, 249) if is_quote else (255, 255, 255)
-        outline_color = (239, 243, 244)
         draw.rounded_rectangle(
             (0, 0, width - 1, height - 1),
-            radius=16 if is_quote else 18,
-            fill=fill_color,
-            outline=outline_color,
+            radius=18,
+            fill=(255, 255, 255),
+            outline=(225, 232, 237),
             width=1,
         )
 
@@ -902,11 +896,11 @@ def _run(spec: dict[str, Any]) -> list[str]:
             str(item.get("avatar_path", "")), avatar_size, str(item.get("name", ""))
         )
         card.paste(avatar, (padding, y), avatar)
-        text_x = padding + avatar_size + 12
+        text_x = padding + avatar_size + 14
 
         draw_text(
             draw,
-            (text_x, y + 1),
+            (text_x, y + 2),
             str(item.get("name", "")),
             name_font,
             (15, 20, 25),
@@ -921,14 +915,14 @@ def _run(spec: dict[str, Any]) -> list[str]:
 
         draw_text(
             draw,
-            (text_x, y + name_font.size + 6),
+            (text_x, y + name_font.size + 8),
             meta,
             muted_font,
             (83, 100, 113),
             f"{component_prefix}.meta",
         )
 
-        y += header_height + 12
+        y += header_height + 14
         safe_breaks.append(y)
 
         if text_lines:
@@ -944,33 +938,29 @@ def _run(spec: dict[str, Any]) -> list[str]:
                     f"{component_prefix}.body-line",
                 )
                 safe_breaks.append(y)
-            y += 10
+            y += 12
 
-        # 2. 翻译框重构：使用 Pill 胶囊标签 + 浅色底框描边
         if trans_lines:
             box_top = y
-            box_height = 34 + len(trans_lines) * trans_line + 8
-
+            box_height = 28 + len(trans_lines) * trans_line + 16
             draw.rounded_rectangle(
                 (padding, box_top, width - padding, box_top + box_height),
-                radius=12,
-                fill=(240, 247, 255),
-                outline=(218, 235, 254),
-                width=1,
+                radius=10,
+                fill=(235, 245, 255),
             )
             draw.rounded_rectangle(
-                (padding + 12, box_top + 8, padding + 130, box_top + 28),
-                radius=6,
-                fill=(220, 237, 255),
-            )
-            draw.text(
-                (padding + 18, box_top + 10),
-                "DEEPSEEK 翻译",
-                font=font(13),
+                (padding, box_top, padding + 4, box_top + box_height),
+                radius=2,
                 fill=(29, 155, 240),
             )
 
-            y += 34
+            draw.text(
+                (padding + 16, y + 8),
+                "翻译自DEEPSEEK",
+                font=font(15),
+                fill=(29, 155, 240),
+            )
+            y += 30
             for line in trans_lines:
                 y = draw_lines(
                     card,
@@ -997,52 +987,40 @@ def _run(spec: dict[str, Any]) -> list[str]:
             y += quote_card.height + 16
             safe_breaks.append(y)
 
-        # 3. 互动数据栏：引用卡片自动隐藏底部互动图标
-        if not is_quote:
-            stats_font = font(16)
-            stats_items = [
-                ("reply", str(item.get("replies", 0))),
-                ("repost", str(item.get("retweets", 0))),
-                ("like", str(item.get("likes", 0))),
-                ("views", str(item.get("views", 0))),
-            ]
-            stats_color = (83, 100, 113)
-            cur_x = padding
-            spacing = content_width // 4
-            for icon_kind, value in stats_items:
-                _draw_stats_icon(draw, icon_kind, (cur_x, y + 4), stats_color)
-                draw_text(
-                    draw,
-                    (cur_x + 26, y + 2),
-                    value,
-                    stats_font,
-                    stats_color,
-                    f"{component_prefix}.stats-{icon_kind}",
-                )
-                cur_x += spacing
-
-            y += 32
-            safe_breaks.append(y)
-
-        # 4. “查看原文”链接：采用胶囊按钮与动态文本居中算法
-        if target and item.get("url"):
-            btn_w, btn_h = 120, 32
-            bx = (width - btn_w) // 2
-            draw.rounded_rectangle(
-                (bx, y, bx + btn_w, y + btn_h),
-                radius=16,
-                fill=(239, 243, 246),
+        stats_font = font(18)
+        stats_items = [
+            ("reply", str(item.get("replies", 0))),
+            ("repost", str(item.get("retweets", 0))),
+            ("like", str(item.get("likes", 0))),
+            ("views", str(item.get("views", 0))),
+        ]
+        stats_color = (83, 100, 113)
+        cur_x = padding
+        spacing = content_width // 4
+        for icon_kind, value in stats_items:
+            _draw_stats_icon(draw, icon_kind, (cur_x, y + 4), stats_color)
+            draw_text(
+                draw,
+                (cur_x + 28, y + 3),
+                value,
+                stats_font,
+                stats_color,
+                f"{component_prefix}.stats-{icon_kind}",
             )
-            link_font = font(15)
-            box = draw.textbbox((0, 0), "查看原文", font=link_font)
-            text_w = box[2] - box[0]
+            cur_x += spacing
+
+        y += 32
+        safe_breaks.append(y)
+
+        if target and item.get("url"):
+            link_font = font(18)
             draw.text(
-                (bx + (btn_w - text_w) // 2, y + 6),
+                (width // 2 - 40, y + 2),
                 "查看原文",
                 font=link_font,
                 fill=(29, 155, 240),
             )
-            y += 36
+            y += 32
             safe_breaks.append(y)
 
         return card, safe_breaks
