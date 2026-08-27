@@ -41,12 +41,25 @@ def _hybrid_backend(known_emojis: set[str] | None = None):
 
 
 class _FakePangoBackend:
+    def __init__(self) -> None:
+        self.grapheme_calls = 0
+        self.cluster_calls = 0
+        self.metric_calls = 0
+
     def graphemes(self, text: str) -> list[str]:
+        self.grapheme_calls += 1
         return pillow_worker._fallback_graphemes(text)
 
     def run_metrics(self, text: str, size: int, _component: str):
-        advance = len(self.graphemes(text)) * size * 0.7
+        self.metric_calls += 1
+        advance = len(pillow_worker._fallback_graphemes(text)) * size * 0.7
         return advance, (0.0, -size * 0.8, advance, size * 0.2)
+
+    def cluster_advances(
+        self, clusters: list[str], size: int, _component: str
+    ) -> list[float]:
+        self.cluster_calls += 1
+        return [size * 0.7] * len(clusters)
 
 
 def _tweet(tweet_id: str, text: str = "post") -> TweetItem:
@@ -406,6 +419,34 @@ def test_hybrid_mixed_wrap_splits_an_oversized_ascii_token():
     assert len(lines) > 2
     assert all(isinstance(line, pillow_worker._HybridLine) for line in lines)
     assert all(line.advance <= 120 for line in lines)
+
+
+def test_hybrid_mixed_wrap_keeps_pango_layout_calls_linear():
+    backend = _hybrid_backend()
+    fake_pango = _FakePangoBackend()
+    backend._pango_backend = fake_pango
+    text_font = backend.font(24)
+    sample = "中文 " + "देवनागरी" * 24 + " English"
+
+    lines = backend.wrap(sample, text_font, 220)
+
+    assert len(lines) > 4
+    assert fake_pango.grapheme_calls == 1
+    assert fake_pango.cluster_calls == 1
+    assert fake_pango.metric_calls <= len(lines) * 2
+    assert all(line.advance <= 220 for line in lines)
+
+    calls = (
+        fake_pango.grapheme_calls,
+        fake_pango.cluster_calls,
+        fake_pango.metric_calls,
+    )
+    assert backend.wrap(sample, text_font, 220) == lines
+    assert (
+        fake_pango.grapheme_calls,
+        fake_pango.cluster_calls,
+        fake_pango.metric_calls,
+    ) == calls
 
 
 def test_fallback_graphemes_keep_marks_zwj_and_flags_together():
