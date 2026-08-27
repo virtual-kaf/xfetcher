@@ -1,18 +1,18 @@
 import asyncio
-import time
 from datetime import datetime, timezone
 
 from nonebot import logger, on_command
 from nonebot.adapters.onebot.v11 import (
     Bot,
-    Event,
     GroupMessageEvent,
     Message,
-    MessageSegment,
 )
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
 from .calendar_view import build_month_view
+from .command_guard import claim_group_command
 from .config import OPTIONAL_MEMBERS
 from .core import run_tweet_pipeline
 from .renderer import (
@@ -24,42 +24,45 @@ from .services.image_sender import image_cq_from_path, image_segment_from_path
 from .services.switches import is_master_on
 from .storage import STATUS_FILE, get_group_config, get_live_events, save_group_config
 
-
-def _is_group_admin(event: Event) -> bool:
-    """Return whether a group owner or administrator sent the event."""
-    return (
-        isinstance(event, GroupMessageEvent)
-        and event.sender.role in {"owner", "admin"}
-    )
-
-
 # ===== 订阅 =====
 
-sub_cmd = on_command("kabubu subscribe", aliases={"/kabubu subscribe", "kabubu 订阅", "订阅"},
+sub_cmd = on_command("sub", aliases={"订阅"},
                      priority=1, block=True)
 
 
 @sub_cmd.handle()
 async def handle_sub(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    if not await claim_group_command("sub", event.group_id):
+        await sub_cmd.finish()
     if not is_master_on(event.group_id):
         await sub_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
     target = args.extract_plain_text().strip().lstrip("@")
     if not target:
         allowed = "、".join(m for m in OPTIONAL_MEMBERS if m != "Meeimme")
-        await sub_cmd.finish(f"请提供要订阅的 ID，例如：/kabubu subscribe @id\n可选：{allowed}")
+        await sub_cmd.finish(f"请提供要订阅的 ID，例如：/sub @id\n可选：{allowed}")
     msg = subscribe(str(event.group_id), target)
     await sub_cmd.finish(msg)
 
 
 # ===== 取消订阅 =====
 
-unsub_cmd = on_command("kabubu unsubscribe",
-                       aliases={"/kabubu unsubscribe", "kabubu 取消订阅", "取消订阅"},
-                       priority=1, block=True)
+unsub_cmd = on_command(
+    "unsub",
+    aliases={"取消订阅"},
+    permission=GROUP_ADMIN | GROUP_OWNER,
+    priority=1,
+    block=True,
+)
 
 
 @unsub_cmd.handle()
-async def handle_unsub(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def handle_unsub(
+    bot: Bot,
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+):
+    if not await claim_group_command("unsub", event.group_id):
+        await unsub_cmd.finish()
     if not is_master_on(event.group_id):
         await unsub_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
     target = args.extract_plain_text().strip().lstrip("@")
@@ -72,12 +75,14 @@ async def handle_unsub(bot: Bot, event: GroupMessageEvent, args: Message = Comma
 
 # ===== 订阅列表 =====
 
-sublist_cmd = on_command("kabubu sublist", aliases={"/kabubu sublist", "sublist", "/sublist"},
+sublist_cmd = on_command("sublist", aliases={"订阅名单"},
                          priority=1, block=True)
 
 
 @sublist_cmd.handle()
 async def handle_sublist(bot: Bot, event: GroupMessageEvent):
+    if not await claim_group_command("sublist", event.group_id):
+        await sublist_cmd.finish()
     gid = str(event.group_id)
     if not is_master_on(gid):
         await sublist_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
@@ -101,15 +106,18 @@ async def handle_sublist(bot: Bot, event: GroupMessageEvent):
 
 # ===== 手动更新 =====
 
-update_cmd = on_command("kabubu update", aliases={"/kabubu update", "updatex", "/updatex"},
-                        priority=1, block=True)
+update_cmd = on_command(
+    "updatex",
+    permission=SUPERUSER,
+    priority=1,
+    block=True,
+)
 
 
 @update_cmd.handle()
-async def handle_update(bot: Bot, event: Event):
-    if not _is_group_admin(event):
-        await update_cmd.finish("只有群主或管理员可以手动更新 kabubu")
-
+async def handle_update(bot: Bot, event: GroupMessageEvent):
+    if not await claim_group_command("updatex", event.group_id):
+        await update_cmd.finish()
     if not is_master_on(event.group_id):
         await update_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
 
@@ -130,23 +138,19 @@ async def handle_update(bot: Bot, event: Event):
 
 # ===== 手动拉取（本地缓存卡片） =====
 
-# Per-group fetch cooldown: 120 seconds
-_fetch_cooldown: dict[str, float] = {}
-
-fetch_cmd = on_command("kabubu fetch", aliases={"/kabubu fetch", "fetchx", "/fetchx"},
+fetch_cmd = on_command("fetch", aliases={"获取"},
                        priority=1, block=True)
 
 
 @fetch_cmd.handle()
-async def handle_fetch(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def handle_fetch(
+    bot: Bot,
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+):
     gid = str(event.group_id)
-
-    # Check cooldown
-    now = time.time()
-    last = _fetch_cooldown.get(gid, 0)
-    if now - last < 120:
-        remain = 120 - int(now - last)
-        await fetch_cmd.finish(f"? 冷却中，请 {remain} 秒后再试")
+    if not await claim_group_command("fetch", gid):
+        await fetch_cmd.finish()
 
     if not is_master_on(gid):
         await fetch_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
@@ -155,7 +159,7 @@ async def handle_fetch(bot: Bot, event: GroupMessageEvent, args: Message = Comma
     raw = args.extract_plain_text().strip()
     parts = raw.split()
     if not parts:
-        await fetch_cmd.finish("用法：/kabubu fetch @用户名 [数量, 最多3]")
+        await fetch_cmd.finish("用法：/fetch @用户名 [数量, 最多3]")
     target = parts[0].lstrip("@")
     count = 1
     if len(parts) > 1:
@@ -169,8 +173,6 @@ async def handle_fetch(bot: Bot, event: GroupMessageEvent, args: Message = Comma
     from .config import CARD_DIR, CORE_MEMBERS, OPTIONAL_MEMBERS
     if target not in CORE_MEMBERS and target not in OPTIONAL_MEMBERS:
         await fetch_cmd.finish(f"? @{target} 不在白名单内")
-
-    _fetch_cooldown[gid] = now
 
     # Look up cached tweet IDs from STATUS_FILE
     import json
@@ -233,12 +235,23 @@ async def handle_fetch(bot: Bot, event: GroupMessageEvent, args: Message = Comma
 
 # ===== 水帖过滤 =====
 
-xfilter_cmd = on_command("kabubu xfilter", aliases={"/kabubu xfilter", "xfilter", "/xfilter"},
-                         priority=1, block=True)
+xfilter_cmd = on_command(
+    "filter",
+    aliases={"水帖过滤"},
+    permission=GROUP_ADMIN | GROUP_OWNER,
+    priority=1,
+    block=True,
+)
 
 
 @xfilter_cmd.handle()
-async def handle_xfilter(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def handle_xfilter(
+    bot: Bot,
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+):
+    if not await claim_group_command("filter", event.group_id):
+        await xfilter_cmd.finish()
     action = args.extract_plain_text().strip().lower()
     gid = str(event.group_id)
     if not is_master_on(gid):
@@ -257,19 +270,25 @@ async def handle_xfilter(bot: Bot, event: GroupMessageEvent, args: Message = Com
         status = "?? 开启" if cfg.filter_water else "?? 关闭"
         await xfilter_cmd.finish(
             f"水帖过滤：{status}\n"
-            "用法：/kabubu xfilter on | off\n"
+            "用法：/filter on | off\n"
             "开启后不推送回复和引用类型的推文。"
         )
 
 # ===== 活动日程 =====
 
-cal_cmd = on_command("kabubu calendar",
-                     aliases={"/kabubu calendar", "/schedule", "日历", "/日历"},
+cal_cmd = on_command("calendar",
+                     aliases={"日历"},
                      priority=1, block=True)
 
 
 @cal_cmd.handle()
-async def handle_calendar(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def handle_calendar(
+    bot: Bot,
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+):
+    if not await claim_group_command("calendar", event.group_id):
+        await cal_cmd.finish()
     if not is_master_on(event.group_id):
         await cal_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
     page_str = args.extract_plain_text().strip()

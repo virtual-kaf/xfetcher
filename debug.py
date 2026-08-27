@@ -1,29 +1,39 @@
-"""Debug commands for nonebot_plugin_xfetch.
-
-/kabubu generate <twitter_url>  — fetch + render a single tweet card
-"""
+"""Superuser-only card generation command for nonebot_plugin_xfetch."""
 import re
 
 from nonebot import logger, on_command
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
 from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
 from .clients.deepseek import translate_and_review_batch
 from .clients.fxtwitter import fetch_conversation
+from .command_guard import claim_group_command
 from .renderer import render_conversation_card
 from .services.image_sender import image_segment_from_path
 from .services.switches import is_master_on
 
-gen_cmd = on_command("kabubu generate", aliases={"/kabubu generate"}, priority=1, block=True)
+gen_cmd = on_command(
+    "generate",
+    permission=SUPERUSER,
+    priority=1,
+    block=True,
+)
 
 
 @gen_cmd.handle()
-async def handle_generate(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def handle_generate(
+    bot: Bot,
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+):
+    if not await claim_group_command("generate", event.group_id):
+        await gen_cmd.finish()
     if not is_master_on(event.group_id):
         await gen_cmd.finish("本群未开启 xfetch，请先使用 /kabubu on")
     url = args.extract_plain_text().strip()
     if not url:
-        await gen_cmd.finish("用法: /kabubu generate <推特链接>")
+        await gen_cmd.finish("用法: /generate <推特链接>")
 
     tid = _parse_tweet_id(url)
     if not tid:
@@ -51,12 +61,12 @@ async def handle_generate(bot: Bot, event: GroupMessageEvent, args: Message = Co
 
     if items:
         try:
-            translations, reviews, _ = (
+            translations, _, _ = (
                 await translate_and_review_batch(items)
             )
         except Exception as e:
             logger.warning(f"[Debug] translate failed: {e}")
-            translations, reviews = {}, {}
+            translations = {}
 
         if conv.target:
             conv.target.translated_text = translations.get(f"{tid}:target", "")

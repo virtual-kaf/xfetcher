@@ -40,12 +40,14 @@ else:
             "and live reminders"
         ),
         usage=(
-            "/kabubu subscribe @id\n"
-            "/kabubu unsubscribe @id\n"
-            "/kabubu xfilter on | off\n"
-            "/kabubu calendar [page]\n"
-            "/kabubu update\n"
-            "/kabubu generate <推特链接>"
+            "/sub @id | /订阅 @id\n"
+            "/unsub @id | /取消订阅 @id\n"
+            "/sublist | /订阅名单\n"
+            "/calendar [page] | /日历 [page]\n"
+            "/fetch @id [数量] | /获取 @id [数量]\n"
+            "/filter on | off | /水帖过滤 on | off\n"
+            "/updatex\n"
+            "/generate <推特链接>"
         ),
         type="application",
         supported_adapters={"~onebot.v11"},
