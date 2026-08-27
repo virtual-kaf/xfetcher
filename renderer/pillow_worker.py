@@ -1390,12 +1390,26 @@ def _run(spec: dict[str, Any]) -> list[str]:
                             text_x = x1 + 84
                         except (OSError, ValueError):
                             pass
+                    member_disp = str(event.get("member_disp", ""))
+                    time_disp = str(event.get("time_disp", ""))
+                    meta = (
+                        f"{member_disp} · {time_disp}"
+                        if member_disp
+                        else time_disp
+                    )
+                    meta_lines = wrap(
+                        meta,
+                        font(13),
+                        x2 - text_x - 15,
+                        "calendar.event-meta",
+                    )[:1]
                     draw_text(
                         draw,
                         (text_x, event_y + 5),
-                        str(event.get("time_disp", "")),
+                        meta_lines[0] if meta_lines else "",
                         font(13),
                         (76, 76, 76),
+                        "calendar.event-meta",
                     )
                     title_lines = wrap(
                         str(event.get("title", "")),

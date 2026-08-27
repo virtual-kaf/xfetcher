@@ -18,6 +18,22 @@ def _month_distance(start: datetime, end: datetime) -> int:
     return (end.year - start.year) * 12 + end.month - start.month
 
 
+def _format_member_mentions(members: Iterable[str]) -> str:
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for member in members:
+        value = str(member).strip().lstrip("@").strip()
+        key = value.casefold()
+        if not value or key in seen:
+            continue
+        seen.add(key)
+        normalized.append(value)
+    if not normalized:
+        return ""
+    first = f"@{normalized[0]}"
+    return f"{first} +{len(normalized) - 1}" if len(normalized) > 1 else first
+
+
 def build_month_view(
     events: Iterable[LiveEvent],
     page: int,
@@ -64,13 +80,18 @@ def build_month_view(
             "event_id": event.event_id,
             "title": event.title,
             "members": event.members,
-            "time_disp": start_time.strftime("%H:%M") if event.is_precise else "时间未定",
+            "member_disp": _format_member_mentions(event.members),
+            "time_disp": (
+                start_time.strftime("%H:%M") if event.is_precise else "时间未定"
+            ),
             "cover_url": event.cover_url,
             "source_tweet_id": event.source_tweet_id,
             "sort_time": start_time.isoformat(),
         })
 
-    weeks = calendar.Calendar(firstweekday=calendar.MONDAY).monthdatescalendar(year, month)
+    weeks = calendar.Calendar(firstweekday=calendar.MONDAY).monthdatescalendar(
+        year, month
+    )
     if len(weeks) == 4:
         next_week_start = weeks[-1][-1].toordinal() + 1
         weeks.append([
