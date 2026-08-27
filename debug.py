@@ -10,6 +10,7 @@ from .clients.deepseek import translate_and_review_batch
 from .clients.fxtwitter import fetch_conversation
 from .command_guard import claim_group_command
 from .renderer import render_conversation_card
+from .services.broadcaster import _send_renderer_fallback
 from .services.image_sender import image_segment_from_path
 from .services.switches import is_master_on
 
@@ -71,10 +72,16 @@ async def handle_generate(
         if conv.target:
             conv.target.translated_text = translations.get(f"{tid}:target", "")
 
-    # Render
-    paths = await render_conversation_card(conv)
+    # Render; preserve the prepared conversation through a OneBot fallback.
+    try:
+        paths = await render_conversation_card(conv)
+    except Exception:
+        logger.exception("[Debug] renderer failed tweet={}", tid)
+        paths = []
     if not paths:
-        await gen_cmd.finish("❌ 渲染失败")
+        if await _send_renderer_fallback(bot, event.group_id, conv):
+            await gen_cmd.finish()
+        await gen_cmd.finish("❌ 渲染失败，合并转发 fallback 也未发送")
 
     # Send
     for path in paths:

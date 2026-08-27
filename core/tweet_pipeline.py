@@ -9,7 +9,7 @@ from ..clients.discovery import discover_tweet_urls
 from ..clients.fxtwitter import fetch_conversation
 from ..config import JST, MAX_POST_AGE, XFETCH_FETCH_CONCURRENCY
 from ..models.tweet import TweetConversation
-from ..storage import get_live_events, is_duplicate, mark_sent
+from ..storage import get_live_events, is_duplicate
 from ..utils import parse_time
 from .event_media import attach_event_media
 from .live_pipeline import merge_member_to_event, process_live_event
@@ -54,7 +54,7 @@ async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
         logger.warning("[Pipeline] URL discovery returned no results")
         return []
 
-    # Dedup + mark sent immediately (fix race condition)
+    # Dedup now; delivery is marked only after a group actually accepts it.
     # Normalize handles: strip @ prefix from Grok responses
     seen_ids = set()
     tasks = {}
@@ -73,7 +73,6 @@ async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
             skipped_duplicate += 1
             continue
         seen_ids.add(tid)
-        mark_sent(member, tid)
         tasks[tid] = member
 
     logger.info(
@@ -122,6 +121,7 @@ async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
             )
             continue
         convs[tid] = conv
+        conv.source_member = tasks[tid]
 
     logger.info(
         f"[Pipeline] FxTwitter accepted={len(convs)}, "

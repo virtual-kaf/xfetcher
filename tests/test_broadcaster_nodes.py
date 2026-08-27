@@ -8,6 +8,7 @@ from nonebot_plugin_xfetch.models.tweet import (
     TweetAuthor,
     TweetConversation,
     TweetItem,
+    TweetMedia,
 )
 from nonebot_plugin_xfetch.services import broadcaster
 
@@ -212,3 +213,72 @@ async def test_broadcast_waits_three_to_five_seconds_between_target_groups(
 
     assert [call[1]["group_id"] for call in bot.calls] == [100, 200, 300]
     assert delays == [4.0, 4.0]
+
+
+@pytest.mark.asyncio
+async def test_renderer_failure_uses_prepared_conversation_forward(monkeypatch):
+    conv = _conversation("1")
+    conv.target.text = "original text"
+    conv.target.translated_text = "翻译文本"
+    conv.target.url = "https://x.com/virtual_kaf/status/1"
+    conv.target.media = [
+        TweetMedia(url="https://pbs.twimg.com/media/one.jpg", type="photo"),
+        TweetMedia(url="not-a-media-url", type="photo"),
+    ]
+    conv.ancestors = [TweetItem(
+        id="0",
+        author=TweetAuthor(screen_name="ancestor"),
+        text="thread text",
+    )]
+    conv.quote = TweetItem(
+        id="q",
+        author=TweetAuthor(screen_name="quoted"),
+        text="quote text",
+    )
+
+    async def render(_conv):
+        raise RuntimeError("renderer down")
+
+    monkeypatch.setattr(broadcaster, "render_conversation_card", render)
+    monkeypatch.setattr(
+        broadcaster,
+        "get_all_group_configs",
+        lambda: [GroupConfig(group_id="100", subs=["virtual_kaf"])],
+    )
+    monkeypatch.setattr(broadcaster, "is_master_on", lambda _gid: True)
+    bot = _FakeBot()
+
+    delivered = await broadcaster.broadcast_to_groups(bot, [conv])
+
+    assert delivered == [conv]
+    assert [call[0] for call in bot.calls] == ["send_group_forward_msg"]
+    nodes = bot.calls[0][1]["messages"]
+    assert [node["data"]["name"] for node in nodes] == [
+        "@ancestor", "@virtual_kaf", "@quoted"
+    ]
+    target_content = nodes[1]["data"]["content"]
+    assert "original text" in target_content
+    assert "翻译文本" in target_content
+    assert "https://x.com/virtual_kaf/status/1" in target_content
+    assert "https://pbs.twimg.com/media/one.jpg" in target_content
+    assert "not-a-media-url" not in target_content
+
+
+@pytest.mark.asyncio
+async def test_renderer_failure_forward_keeps_conversation_unsent(monkeypatch):
+    conv = _conversation("1")
+
+    async def render(_conv):
+        return []
+
+    monkeypatch.setattr(broadcaster, "render_conversation_card", render)
+    monkeypatch.setattr(
+        broadcaster,
+        "get_all_group_configs",
+        lambda: [GroupConfig(group_id="100", subs=["virtual_kaf"])],
+    )
+    monkeypatch.setattr(broadcaster, "is_master_on", lambda _gid: True)
+
+    delivered = await broadcaster.broadcast_to_groups(_ForwardFailingBot(), [conv])
+
+    assert delivered == []

@@ -10,6 +10,7 @@ from .core import run_tweet_pipeline
 from .renderer import cleanup_old_cards
 from .services import broadcast_to_groups, get_all_members
 from .services.event_service import check_upcoming_lives
+from .storage import mark_sent
 
 
 # During the quiet period, automatic polling is reduced to the :02 run only.
@@ -52,7 +53,14 @@ async def check_xfetch():
         members = get_all_members()
         convs = await run_tweet_pipeline(members)
         if convs:
-            await broadcast_to_groups(bot, convs)
+            delivered = await broadcast_to_groups(bot, convs)
+            for conv in delivered:
+                target = conv.target
+                member = conv.source_member or (
+                    target.author.screen_name if target is not None else ""
+                )
+                if target is not None and member:
+                    mark_sent(member, target.id)
     except Exception as e:
         logger.error(f"[Scheduler] check failed: {e}", exc_info=True)
 

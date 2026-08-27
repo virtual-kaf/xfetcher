@@ -52,7 +52,6 @@ async def test_pipeline_drops_old_tweet_before_translation(monkeypatch):
 
     monkeypatch.setattr(tweet_pipeline, "discover_tweet_urls", fake_discover)
     monkeypatch.setattr(tweet_pipeline, "is_duplicate", lambda *_args: False)
-    monkeypatch.setattr(tweet_pipeline, "mark_sent", lambda *_args: None)
     monkeypatch.setattr(tweet_pipeline, "fetch_conversation", fake_fetch)
     monkeypatch.setattr(
         tweet_pipeline,

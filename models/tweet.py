@@ -41,3 +41,6 @@ class TweetConversation:
     target: Optional[TweetItem] = None
     quote: Optional[TweetItem] = None
     replies: List[TweetItem] = field(default_factory=list)
+    # Discovery handle retained until delivery accounting completes.  It is not
+    # renderer input and therefore does not alter card output.
+    source_member: str = ""
