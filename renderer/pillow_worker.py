@@ -15,10 +15,32 @@ import unicodedata
 from dataclasses import dataclass
 from itertools import pairwise
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 MAX_CANVAS_HEIGHT = 16_384
 MAX_CANVAS_PIXELS = 12_000_000
+
+
+def _calendar_meta_lines(
+    member_disp: str,
+    time_disp: str,
+    wrap_text: Callable[[str], list[Any]],
+) -> list[Any]:
+    """Keep an event's start time visible when the metadata wraps."""
+    if not member_disp:
+        return wrap_text(time_disp)[:1]
+
+    meta = f"{member_disp} · {time_disp}"
+    lines = wrap_text(meta)
+    if len(lines) <= 1:
+        return lines
+
+    # Image cards have less room after the cover thumbnail. Put the time first
+    # in the fallback line so it cannot disappear on the second wrapped line.
+    prioritized_lines = wrap_text(f"{time_disp} · {member_disp}")
+    if prioritized_lines:
+        return prioritized_lines[:1]
+    return wrap_text(time_disp)[:1]
 
 
 class RenderSizeError(RuntimeError):
@@ -2104,22 +2126,26 @@ def _run(spec: dict[str, Any]) -> list[str]:
                             pass
                     member_disp = str(event.get("member_disp", ""))
                     time_disp = str(event.get("time_disp", ""))
-                    meta = (
-                        f"{member_disp} · {time_disp}"
-                        if member_disp
-                        else time_disp
-                    )
-                    meta_lines = wrap(
-                        meta,
-                        font(13),
-                        x2 - text_x - 15,
-                        "calendar.event-meta",
+                    # A cover leaves only about 133px for metadata. Use a
+                    # compact line there so both the member and start time
+                    # remain visible instead of wrapping one out of the card.
+                    meta_font = font(10 if event.get("show_image") else 13)
+                    meta_width = x2 - text_x - 15
+                    meta_lines = _calendar_meta_lines(
+                        member_disp,
+                        time_disp,
+                        lambda value: wrap(
+                            value,
+                            meta_font,
+                            meta_width,
+                            "calendar.event-meta",
+                        ),
                     )[:1]
                     draw_text(
                         draw,
                         (text_x, event_y + 5),
                         meta_lines[0] if meta_lines else "",
-                        font(13),
+                        meta_font,
                         (76, 76, 76),
                         "calendar.event-meta",
                     )

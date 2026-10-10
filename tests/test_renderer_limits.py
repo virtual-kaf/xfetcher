@@ -381,6 +381,23 @@ def test_hybrid_fast_path_matches_original_pillow_metrics_and_wrap():
     assert not backend.pango_initialized
 
 
+def test_calendar_meta_keeps_member_and_start_time_on_first_line():
+    backend = _hybrid_backend()
+    text_font = backend.font(10)
+
+    def wrap_text(value: str):
+        return backend.wrap(value, text_font, 133)
+
+    lines = pillow_worker._calendar_meta_lines(
+        "@BEMA_virtual +1", "20:00", wrap_text
+    )
+
+    assert lines
+    first_line = "".join(lines[0])
+    assert "@BEMA_virtual +1" in first_line
+    assert "20:00" in first_line
+
+
 def test_hybrid_twemoji_run_does_not_initialize_pango():
     backend = _hybrid_backend({"❤️"})
 
