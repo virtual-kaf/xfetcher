@@ -7,12 +7,19 @@ from nonebot import logger
 from ..clients.deepseek import match_events_batch, translate_and_review_batch
 from ..clients.discovery import discover_tweet_urls
 from ..clients.fxtwitter import fetch_conversation
-from ..config import JST, MAX_POST_AGE, XFETCH_FETCH_CONCURRENCY
+from ..config import (
+    JST,
+    MAX_POST_AGE,
+    XFETCH_FETCH_CONCURRENCY,
+    XFETCH_VISION_ENABLED,
+    XFETCH_VISION_MAX_EVENTS_PER_POST,
+)
 from ..models.tweet import TweetConversation
 from ..storage import get_live_events, is_duplicate
 from ..utils import parse_time
 from .event_media import attach_event_media
 from .live_pipeline import merge_member_to_event, process_live_event
+from .vision_images import resolve_post_images, select_post_images
 
 
 def _parse_tweet_id(url: str) -> str | None:
@@ -42,6 +49,33 @@ def _parse_tweet_created_at(raw: str) -> datetime | None:
             continue
     parsed = parse_time(value)
     return parsed.astimezone(timezone.utc) if parsed is not None else None
+
+
+def _normalize_detected_events(events: list) -> list:
+    """Deduplicate detected events within a tweet and cap how many are kept."""
+    deduped: list = []
+    seen: set[tuple[str, str, str]] = set()
+    per_tweet: dict[str, int] = {}
+    for event in events:
+        if not isinstance(event, dict):
+            continue
+        tid = str(event.get("tid", ""))
+        title = re.sub(
+            r"\s+", "", str(event.get("event_title", ""))
+        ).casefold()
+        start = str(event.get("event_start_utc", "")).strip()
+        if not tid or not title or not start:
+            continue
+        tweet_id = tid.split(":", 1)[0]
+        key = (tweet_id, title, start)
+        if key in seen:
+            continue
+        if per_tweet.get(tweet_id, 0) >= XFETCH_VISION_MAX_EVENTS_PER_POST:
+            continue
+        seen.add(key)
+        per_tweet[tweet_id] = per_tweet.get(tweet_id, 0) + 1
+        deduped.append(event)
+    return deduped
 
 
 async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
@@ -128,16 +162,35 @@ async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
         f"too_old={skipped_old}, invalid_time={skipped_bad_time}"
     )
 
-    # Step 3: Collect texts for combined translate+review+event (single API call)
+    # Step 3: Collect texts (and target/quote photos) for the combined call.
     items: list[tuple[str, str, bool]] = []
+    image_urls_by_id: dict[str, list[str]] = {}
     for tid, conv in convs.items():
         if conv.target:
-            items.append((f"{tid}:target", conv.target.text, True))
+            target_id = f"{tid}:target"
+            items.append((target_id, conv.target.text, True))
+            if XFETCH_VISION_ENABLED:
+                urls = select_post_images(conv.target)
+                if urls:
+                    image_urls_by_id[target_id] = urls
         for i, anc in enumerate(conv.ancestors):
             if anc.id != (conv.target.id if conv.target else ""):
                 items.append((f"{tid}:anc{i}", anc.text, True))
         if conv.quote:
-            items.append((f"{tid}:quote", conv.quote.text, True))
+            quote_id = f"{tid}:quote"
+            items.append((quote_id, conv.quote.text, True))
+            if XFETCH_VISION_ENABLED:
+                urls = select_post_images(conv.quote)
+                if urls:
+                    image_urls_by_id[quote_id] = urls
+
+    images_by_id: dict[str, list[dict]] = {}
+    if image_urls_by_id:
+        try:
+            images_by_id = await resolve_post_images(image_urls_by_id)
+        except Exception as e:  # noqa: BLE001 - vision is best effort
+            logger.warning(f"[Pipeline] Vision image download failed: {e}")
+            images_by_id = {}
 
     # Step 4: One API call for translate + review + event detection
     translations: dict = {}
@@ -145,11 +198,18 @@ async def run_tweet_pipeline(members: list[str]) -> list[TweetConversation]:
     events_detected: list = []
     if items:
         try:
-            translations, reviews, events_detected = (
-                await translate_and_review_batch(items)
-            )
+            if images_by_id:
+                translations, reviews, events_detected = (
+                    await translate_and_review_batch(items, images_by_id)
+                )
+            else:
+                translations, reviews, events_detected = (
+                    await translate_and_review_batch(items)
+                )
         except Exception as e:  # noqa: BLE001 - feed delivery can continue untranslated
             logger.warning(f"[Pipeline] Translate+Review+Event failed: {e}")
+
+    events_detected = _normalize_detected_events(events_detected)
 
     # Log review results
     for rid, review in reviews.items():
@@ -261,7 +321,7 @@ async def _process_events_impl(events_detected: list, tasks: dict):
                 logger.warning(f"[Event] Dropped (match): member not found for tid={tid!r}, tweet_id={tweet_id!r}")
                 continue
 
-            matched_id = matches.get(tid, "")
+            matched_id = matches.get(ev["event_key"], "")
             if matched_id:
                 await merge_member_to_event(matched_id, member, ev)
             else:

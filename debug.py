@@ -9,6 +9,8 @@ from nonebot.permission import SUPERUSER
 from .clients.deepseek import translate_and_review_batch
 from .clients.fxtwitter import fetch_conversation
 from .command_guard import claim_group_command
+from .config import XFETCH_VISION_ENABLED
+from .core.vision_images import resolve_post_images, select_post_images
 from .renderer import render_conversation_card
 from .services.broadcaster import _send_renderer_fallback
 from .services.image_sender import image_segment_from_path
@@ -53,18 +55,37 @@ async def handle_generate(
 
     # Translate
     items = []
+    image_urls_by_id: dict[str, list[str]] = {}
     if conv.target:
         items.append((f"{tid}:target", conv.target.text, True))
+        if XFETCH_VISION_ENABLED:
+            urls = select_post_images(conv.target)
+            if urls:
+                image_urls_by_id[f"{tid}:target"] = urls
     if conv.root and conv.root.id != (conv.target.id if conv.target else ""):
         items.append((f"{tid}:root", conv.root.text, False))
     if conv.quote:
         items.append((f"{tid}:quote", conv.quote.text, False))
+        if XFETCH_VISION_ENABLED:
+            urls = select_post_images(conv.quote)
+            if urls:
+                image_urls_by_id[f"{tid}:quote"] = urls
 
     if items:
         try:
-            translations, _, _ = (
-                await translate_and_review_batch(items)
+            images_by_id = (
+                await resolve_post_images(image_urls_by_id)
+                if image_urls_by_id
+                else {}
             )
+            if images_by_id:
+                translations, _, _ = (
+                    await translate_and_review_batch(items, images_by_id)
+                )
+            else:
+                translations, _, _ = (
+                    await translate_and_review_batch(items)
+                )
         except Exception as e:
             logger.warning(f"[Debug] translate failed: {e}")
             translations = {}

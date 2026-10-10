@@ -45,6 +45,12 @@ def _get_config_int(
     return min(max(value, minimum), maximum)
 
 
+def _get_config_bool(name: str, default: bool = False) -> bool:
+    """Read a boolean setting from env/dotenv with a safe fallback."""
+    raw = _get_config_str(name, "true" if default else "false").strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
 
 # Standalone remote fetch service. Keep raw strings here and validate them
 # when the service starts so bad remote settings cannot break the QQ plugin.
@@ -95,7 +101,40 @@ DEEPSEEK_API_URL: str = (
 )
 DEEPSEEK_MODEL: str = _get_config_str(
     "KABUBU_DEEPSEEK_MODEL",
-    _get_config_str("KABUBU_CHAT_MODEL", "deepseek-v4-flash"),
+    _get_config_str("KABUBU_CHAT_MODEL", "deepseek-flash"),
+)
+
+# 图文活动提取。默认关闭，灰度验证后再打开。
+XFETCH_VISION_ENABLED: bool = _get_config_bool(
+    "KABUBU_XFETCH_VISION_ENABLED", False
+)
+XFETCH_VISION_MAX_IMAGES_PER_SOURCE: int = _get_config_int(
+    "KABUBU_XFETCH_VISION_MAX_IMAGES_PER_SOURCE", 3, minimum=1, maximum=10
+)
+XFETCH_VISION_MAX_IMAGES_PER_REQUEST: int = _get_config_int(
+    "KABUBU_XFETCH_VISION_MAX_IMAGES_PER_REQUEST", 12, minimum=1, maximum=100
+)
+XFETCH_VISION_MAX_REQUEST_BYTES: int = _get_config_int(
+    "KABUBU_XFETCH_VISION_MAX_REQUEST_BYTES",
+    8 * 1024 * 1024,
+    minimum=256 * 1024,
+    maximum=40 * 1024 * 1024,
+)
+XFETCH_VISION_MAX_IMAGE_BYTES: int = _get_config_int(
+    "KABUBU_XFETCH_VISION_MAX_IMAGE_BYTES",
+    int(1.5 * 1024 * 1024),
+    minimum=64 * 1024,
+    maximum=32 * 1024 * 1024,
+)
+XFETCH_VISION_MAX_EVENTS_PER_POST: int = _get_config_int(
+    "KABUBU_XFETCH_VISION_MAX_EVENTS_PER_POST", 10, minimum=1, maximum=50
+)
+XFETCH_VISION_INCLUDE_VIDEO_THUMB: bool = _get_config_bool(
+    "KABUBU_XFETCH_VISION_INCLUDE_VIDEO_THUMB", False
+)
+_vision_detail = _get_config_str("KABUBU_XFETCH_VISION_DETAIL", "low").strip().lower()
+XFETCH_VISION_DETAIL: str = (
+    _vision_detail if _vision_detail in {"low", "high", "original", "auto"} else "low"
 )
 
 FXTWITTER_API_BASE: str = "https://api.fxtwitter.com"
